@@ -33,6 +33,27 @@
       </div>
     </header>
     <div class="container mt-5">
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="log-success"
+      >
+        User Logged in<span class="text-success"> Successfull !!</span>
+      </h4>
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="internal-unsuccess"
+      >
+        Internal server<span class="text-danger"> Error</span>
+      </h4>
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="email-unsuccess"
+      >
+        Invalid<span class="text-danger"> email or password</span>
+      </h4>
       <div class="container custom-container">
         <form
           action=""
@@ -65,12 +86,12 @@
             />
           </div>
           <div class="input-group mb-1 mt-4">
-            <button
+            <input
               class="form-control btn btn-success bg-success"
               id="login-btn"
-            >
-              Login
-            </button>
+              type="submit"
+              value="Login"
+            />
           </div>
           <div class="input-group mb-1 mt-4">
             <button
@@ -84,8 +105,6 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="../script/signup.js"></script>
-    <script src="../script/variable.js"></script>
-    <script src="../script/interfaces.js"></script>
+    <script src="../script/login.js"></script>
   </body>
 </html>

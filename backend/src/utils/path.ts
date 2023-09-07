@@ -1,3 +1,3 @@
-let absolutePath: string = "../../../fronted/public";
+let absolutePath: string = "../../../fronted";
 
 export { absolutePath };

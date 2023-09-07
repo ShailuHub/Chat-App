@@ -9,10 +9,12 @@ const regUnSuccess = document.getElementById("reg-unsuccess");
 const passUnSuccess = document.getElementById("pass-unsuccess");
 const emailUnsuccess = document.getElementById("email-unsuccess");
 const internalUnsuccess = document.getElementById("internal-unsuccess");
+const login = document.getElementById("login-main-btn");
 const baseURL = "http://localhost:3000";
 
-console.log(username);
-console.log(email);
+login.addEventListener("click", () => {
+  window.location.href = "/user/login";
+});
 
 form.addEventListener("submit", postUserDetails);
 
@@ -33,27 +35,6 @@ async function postUserDetails(event) {
       setTimeout(() => {
         regSuccess.style.display = "none";
         window.location.href = "/user/login";
-      }, 2000);
-    } else if (response.status == 400) {
-      console.log("Password not matched");
-      passUnSuccess.style.display = "block";
-      setTimeout(() => {
-        passUnSuccess.style.display = "none";
-        form.reset();
-      }, 2000);
-    } else if (response.status == 409) {
-      console.log("Email exists");
-      emailUnsuccess.style.display = "block";
-      setTimeout(() => {
-        emailUnsuccess.style.display = "none";
-        form.reset();
-      }, 2000);
-    } else if (response.status == 500) {
-      console.log("Servererror");
-      internalUnsuccess.style.display = "block";
-      setTimeout(() => {
-        internalUnsuccess.style.display = "none";
-        form.reset();
       }, 2000);
     }
   } catch (error) {

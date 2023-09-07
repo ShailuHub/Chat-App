@@ -63,4 +63,21 @@ const getLogin = async (req: Request, res: Response) => {
   res.status(200).sendFile(filePath);
 };
 
-export { postSignup, getSignup, getLogin };
+const postLogin = async (req: Request, res: Response) => {
+  let { email, password } = req.body;
+  email = email.trim().toLowerCase();
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    if (user) {
+      console.log(user);
+      res.status(200).send({ success: "success", message: "Logged in" });
+    } else {
+      res.status(401).send({ message: "User not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+export { postSignup, getSignup, getLogin, postLogin };

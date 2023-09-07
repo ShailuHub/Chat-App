@@ -13,7 +13,7 @@ const routes_1 = require("./routes");
 const database_1 = __importDefault(require("./utils/database"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
-app.use(express_1.default.static(path_1.default.join(__dirname, "..", "..", "fronted", "public")));
+app.use(express_1.default.static(path_1.default.join(__dirname, "..", "..", "fronted")));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
 app.use(routes_1.userRouter);

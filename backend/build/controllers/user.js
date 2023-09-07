@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLogin = exports.getSignup = exports.postSignup = void 0;
+exports.postLogin = exports.getLogin = exports.getSignup = exports.postSignup = void 0;
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const user_1 = require("../models/user");
@@ -68,3 +68,23 @@ const getLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).sendFile(filePath);
 });
 exports.getLogin = getLogin;
+const postLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { email, password } = req.body;
+    console.log(email, password);
+    //email = email.trim().toLowerCase();
+    try {
+        const user = yield user_1.User.findOne({ where: { email: email } });
+        if (user) {
+            console.log(user);
+            res.status(200).send({ success: "success", message: "Logged in" });
+        }
+        else {
+            res.status(401).send({ message: "User not Found" });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.postLogin = postLogin;
