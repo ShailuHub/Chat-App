@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../css/signup.css" />
+    <title>Chat App</title>
+  </head>
+  <body>
+    <header class="container-fluid custom-header">
+      <div
+        class="container px-2 mb-2 d-flex justify-content-between align-items-center"
+      >
+        <div class="d-flex justify-content-start align-items-center">
+          <a href="#">
+            <h3 class="text-light">
+              <span class="text-success">W</span>e
+              <span class="text-success">C</span>hat
+            </h3>
+          </a>
+        </div>
+        <div class="d-flex justify-content-end align-items-center gap-3">
+          <button class="btn btn-success py-2 px-5" id="login-main-btn">
+            Login
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="container mt-5">
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="reg-success"
+      >
+        Registration<span class="text-success"> Successfull !!</span>
+      </h4>
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="reg-unsuccess"
+      >
+        Registration<span class="text-success"> Unsucessfull !!</span>
+      </h4>
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="pass-unsuccess"
+      >
+        Password and confirm password not<span class="text-danger">
+          Matched</span
+        >
+      </h4>
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="email-unsuccess"
+      >
+        Email already<span class="text-danger"> Exists</span>
+      </h4>
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="internal-unsuccess"
+      >
+        Internal server<span class="text-danger"> Error</span>
+      </h4>
+      <div class="container custom-container">
+        <form
+          action=""
+          id="form"
+          class="d-flex align-content-center justify-content-center flex-column"
+          method="POST"
+        >
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-success text-light">Name</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="name"
+              aria-label="name"
+              required
+              id="name"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-success text-light">Email</span>
+            <input
+              type="email"
+              class="form-control"
+              placeholder="email"
+              aria-label="email"
+              required
+              id="email"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-success text-light">+91</span>
+            <input
+              type="tel"
+              class="form-control"
+              placeholder="phone"
+              aria-label="phone"
+              required
+              id="phone"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text text-light"
+              ><img src="../images/lock.png" alt="lock.png" class="lock-img"
+            /></span>
+            <input
+              type="password"
+              class="form-control"
+              placeholder="password"
+              aria-label="password"
+              required
+              id="password"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text text-light"
+              ><img src="../images/lock.png" alt="lock.png" class="lock-img"
+            /></span>
+            <input
+              type="password"
+              class="form-control"
+              placeholder="confirm-password"
+              aria-label="confirm-password"
+              required
+              id="confirm-password"
+            />
+          </div>
+          <div class="input-group mb-1 mt-4">
+            <input
+              type="submit"
+              class="form-control btn btn-success bg-success"
+              value="Register"
+              id="register-btn"
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../script/signup.js"></script>
+  </body>
+</html>
