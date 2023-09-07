@@ -17,6 +17,7 @@ const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const user_1 = require("../models/user");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const saltRound = 10;
 const postSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { username, email, password, confirm_password, phone } = req.body;
@@ -70,21 +71,33 @@ const getLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getLogin = getLogin;
 const postLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { email, password } = req.body;
-    console.log(email, password);
-    //email = email.trim().toLowerCase();
+    email = email.trim().toLowerCase();
     try {
         const user = yield user_1.User.findOne({ where: { email: email } });
         if (user) {
-            console.log(user);
-            res.status(200).send({ success: "success", message: "Logged in" });
+            const isMatch = yield bcrypt_1.default.compare(password, user.password);
+            if (isMatch) {
+                const secret = process.env.JWT_SECRET;
+                const token = yield jsonwebtoken_1.default.sign({
+                    id: user.id,
+                    email: user.email,
+                    phone: user.phone,
+                }, secret, { expiresIn: "1hr" });
+                res
+                    .status(200)
+                    .json({ success: "success", message: "Logged in", token: token });
+            }
+            else {
+                res.status(401).json({ message: "Unauthorized user" });
+            }
         }
         else {
-            res.status(401).send({ message: "User not Found" });
+            res.status(401).json({ message: "User not Found" });
         }
     }
     catch (error) {
         console.log(error);
-        res.status(500).send({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 exports.postLogin = postLogin;

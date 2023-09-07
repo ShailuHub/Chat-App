@@ -4,6 +4,7 @@ import { absolutePath } from "../utils/path";
 import { User } from "../models/user";
 import sequelize from "../utils/database";
 import bcrypt from "bcrypt";
+import jwt, { Secret } from "jsonwebtoken";
 
 const saltRound: number = 10;
 
@@ -69,14 +70,30 @@ const postLogin = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ where: { email: email } });
     if (user) {
-      console.log(user);
-      res.status(200).send({ success: "success", message: "Logged in" });
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+        const secret: Secret = process.env.JWT_SECRET!;
+        const token = await jwt.sign(
+          {
+            id: user.id,
+            email: user.email,
+            phone: user.phone,
+          },
+          secret,
+          { expiresIn: "1hr" }
+        );
+        res
+          .status(200)
+          .json({ success: "success", message: "Logged in", token: token });
+      } else {
+        res.status(401).json({ message: "Unauthorized user" });
+      }
     } else {
-      res.status(401).send({ message: "User not Found" });
+      res.status(401).json({ message: "User not Found" });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

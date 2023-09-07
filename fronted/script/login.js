@@ -34,6 +34,7 @@ async function postLoginDetails(event) {
       setTimeout(() => {
         logSuccess.style.display = "none";
       }, 3000);
+      localStorage.setItem(token, response.data.token);
     }
   } catch (error) {
     if (error.response.status === 401) {
