@@ -23,7 +23,6 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             const user = yield user_1.User.findOne({ where: { id: decToken.id } });
             if (user) {
                 req.user = user;
-                console.log(user);
             }
             else {
                 throw new Error("User not found");

@@ -4,7 +4,8 @@ import bodyParser from "body-parser";
 import express from "express";
 import cors from "cors";
 import path from "path";
-import { userRouter } from "./routes";
+import { userRouter, messageRouter } from "./routes/index";
+
 import sequelize from "./utils/database";
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(userRouter);
+app.use(messageRouter);
 
 sequelize
   .sync()

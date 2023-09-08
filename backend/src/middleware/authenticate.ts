@@ -21,7 +21,6 @@ const authenticate = async (
       const user = await User.findOne({ where: { id: decToken.id } });
       if (user) {
         req.user = user;
-        console.log(user);
       } else {
         throw new Error("User not found");
       }
