@@ -97,4 +97,14 @@ const postLogin = async (req: Request, res: Response) => {
   }
 };
 
-export { postSignup, getSignup, getLogin, postLogin };
+const getChatPage = async (req: Request, res: Response) => {
+  const filePath: string = path.join(
+    __dirname,
+    absolutePath,
+    "html",
+    "chat.html"
+  );
+  res.status(200).sendFile(filePath);
+};
+
+export { postSignup, getSignup, getLogin, postLogin, getChatPage };

@@ -1,0 +1,77 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0e1630;
+}
+
+h4 {
+  letter-spacing: 2px;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.left-container {
+  width: 40%;
+  height: 100%;
+  border: 2px solid green;
+  margin-right: 1%;
+  border-radius: 10px;
+  padding-left: 20px;
+}
+
+.right-container {
+  width: 60%;
+  height: 100%;
+  border: 2px solid green;
+  margin-left: 1%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#form {
+  margin-top: 30px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#search {
+  font-size: 0.95rem;
+  padding-left: 20px;
+}
+
+#chat-list-container {
+  overflow-y: scroll;
+  max-height: 500px;
+}
+
+#chat-list-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+#chat-list-container::-webkit-scrollbar-thumb {
+  background-color: #157347; /* Change the background color of the thumb */
+  border-radius: 5px; /* Rounded corners for the thumb */
+}
+#chat-list-container::-webkit-scrollbar-track {
+  background-color: #0e1630; /* Change the background color of the track */
+}
+
+.right-container-menu {
+}
+
+.right-container-user {
+}

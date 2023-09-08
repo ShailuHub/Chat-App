@@ -29,20 +29,19 @@ async function postLoginDetails(event) {
   };
   try {
     const response = await axios.post(`${baseURL}/user/login`, details);
+    localStorage.setItem("token", response.data.token);
     if (response.status === 200) {
-      logSuccess.style.display = "block";
-      setTimeout(() => {
-        logSuccess.style.display = "none";
-      }, 3000);
-      localStorage.setItem(token, response.data.token);
+      window.location.href = "/user/chat";
+    } else {
+      window.location.href = "/user/login";
     }
   } catch (error) {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       emailUnsuccess.style.display = "block";
       setTimeout(() => {
         emailUnsuccess.style.display = "none";
       }, 3000);
-    } else if (error.response.status === 500) {
+    } else if (error.response && error.response.status === 500) {
       internalUnsuccess.style.display = "block";
       setTimeout(() => {
         internalUnsuccess.style.display = "none";

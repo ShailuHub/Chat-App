@@ -39,21 +39,17 @@ async function postUserDetails(event) {
     }
   } catch (error) {
     if (error.response.status === 400) {
-      console.log("Password not matched");
       passUnSuccess.style.display = "block";
       setTimeout(() => {
         passUnSuccess.style.display = "none";
-        form.reset();
       }, 3000);
     } else if (error.response.status === 409) {
-      console.log("Email exists");
       emailUnsuccess.style.display = "block";
       setTimeout(() => {
         emailUnsuccess.style.display = "none";
         form.reset();
       }, 3000);
     } else if (error.response.status === 500) {
-      console.log("Servererror");
       internalUnsuccess.style.display = "block";
       setTimeout(() => {
         internalUnsuccess.style.display = "none";

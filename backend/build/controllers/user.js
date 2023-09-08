@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postLogin = exports.getLogin = exports.getSignup = exports.postSignup = void 0;
+exports.getChatPage = exports.postLogin = exports.getLogin = exports.getSignup = exports.postSignup = void 0;
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const user_1 = require("../models/user");
@@ -101,3 +101,8 @@ const postLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.postLogin = postLogin;
+const getChatPage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filePath = path_1.default.join(__dirname, path_2.absolutePath, "html", "chat.html");
+    res.status(200).sendFile(filePath);
+});
+exports.getChatPage = getChatPage;

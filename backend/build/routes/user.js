@@ -7,4 +7,5 @@ router.post("/user/signup", user_1.postSignup);
 router.get("/user/signup", user_1.getSignup);
 router.post("/user/login", user_1.postLogin);
 router.get("/user/login", user_1.getLogin);
+router.get("/user/chat", user_1.getChatPage);
 exports.default = router;
