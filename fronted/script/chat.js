@@ -9,6 +9,7 @@ messageForm.addEventListener("submit", postMessage);
 
 getAllUsers();
 getMessage();
+let firstTime = true;
 
 async function postMessage(event) {
   event.preventDefault();
@@ -33,21 +34,52 @@ async function postMessage(event) {
 async function getMessage() {
   const token = localStorage.getItem("token");
   try {
-    setInterval(async () => {
-      const response = await axios.get(`${baseURL}/user/chat/msg`, {
-        headers: { Authorization: token },
+    let msgArray = [];
+    if (localStorage.getItem("msgArray")) {
+      msgArray = JSON.parse(localStorage.getItem("msgArray"));
+    }
+    let lastMsgId = 0;
+
+    if (msgArray.length > 30) {
+      msgArray = msgArray.splice(15);
+    }
+
+    if (msgArray.length > 0) {
+      lastMsgId = msgArray[msgArray.length - 1].id;
+    }
+
+    const response = await axios.get(`${baseURL}/user/chat/msg/${lastMsgId}`, {
+      headers: { Authorization: token },
+    });
+
+    //Will run for the first time
+    if (firstTime && lastMsgId > 0) {
+      msgArray.forEach((msg) => {
+        if (msg.userId === response.data.userId) {
+          displayMessage(msg.username, msg.message, "user");
+        } else {
+          displayMessage(msg.username, msg.message, "otheruser");
+        }
       });
-      if (response.data.allMessage.length > 0) {
-        response.data.allMessage.forEach((msg) => {
-          if (msg.userId === response.data.userId) {
-            displayMessage(msg.username, msg.message, "user");
-          } else {
-            displayMessage(msg.username, msg.message, "otheruser");
-          }
-        });
-      }
-      scrollBarDown();
-    }, 1000);
+    }
+    firstTime = false;
+
+    //New msg list
+    const newMsgLength = response.data.allMessage.length + lastMsgId;
+    if (newMsgLength >= lastMsgId) {
+      response.data.allMessage.forEach((msg) => {
+        if (msg.userId === response.data.userId) {
+          displayMessage(msg.username, msg.message, "user");
+        } else {
+          displayMessage(msg.username, msg.message, "otheruser");
+        }
+        lastMsgId = lastMsgId + 1;
+        msgArray.push(msg);
+      });
+    }
+    msgArray = JSON.stringify(msgArray);
+    localStorage.setItem("msgArray", msgArray);
+    scrollBarDown();
   } catch (error) {
     console.log(error);
   }

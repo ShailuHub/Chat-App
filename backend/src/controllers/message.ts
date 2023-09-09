@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import sequelize from "../utils/database";
 import { User, Message } from "../models/index";
+import Sequelize from "sequelize";
 
 const postMessage = async (req: Request, res: Response) => {
   const userId = req.user?.id;
@@ -12,12 +13,10 @@ const postMessage = async (req: Request, res: Response) => {
         message,
         userId,
       });
-      res
-        .status(200)
-        .send({
-          message: "Message table created and message posted",
-          username: req.user?.username,
-        });
+      res.status(200).send({
+        message: "Message table created and message posted",
+        username: req.user?.username,
+      });
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: "Internal server error" });
@@ -27,9 +26,18 @@ const postMessage = async (req: Request, res: Response) => {
 
 const getMessage = async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const lastMsgId: number = Number(req.params.lastMsgId);
   if (userId) {
     try {
-      const allMessage = await Message.findAll();
+      // Use Sequelize's where clause to filter messages with IDs greater than lastMsgId
+      const allMessage = await Message.findAll({
+        where: {
+          id: {
+            [Sequelize.Op.gt]: lastMsgId,
+          },
+        },
+      });
+
       res.status(200).send({ message: "Message Posted", allMessage, userId });
     } catch (error) {
       console.log(error);

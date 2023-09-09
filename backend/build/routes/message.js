@@ -8,5 +8,5 @@ const router = (0, express_1.Router)();
 const message_1 = require("../controllers/message");
 const authenticate_1 = __importDefault(require("../middleware/authenticate"));
 router.post("/user/chat", authenticate_1.default, message_1.postMessage);
-router.get("/user/chat/msg", authenticate_1.default, message_1.getMessage);
+router.get("/user/chat/msg/:lastMsgId", authenticate_1.default, message_1.getMessage);
 exports.default = router;

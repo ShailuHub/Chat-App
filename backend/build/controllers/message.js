@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMessage = exports.postMessage = void 0;
 const index_1 = require("../models/index");
+const sequelize_1 = __importDefault(require("sequelize"));
 const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
@@ -22,9 +26,7 @@ const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message,
                 userId,
             });
-            res
-                .status(200)
-                .send({
+            res.status(200).send({
                 message: "Message table created and message posted",
                 username: (_c = req.user) === null || _c === void 0 ? void 0 : _c.username,
             });
@@ -39,9 +41,17 @@ exports.postMessage = postMessage;
 const getMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
     const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.id;
+    const lastMsgId = Number(req.params.lastMsgId);
     if (userId) {
         try {
-            const allMessage = yield index_1.Message.findAll();
+            // Use Sequelize's where clause to filter messages with IDs greater than lastMsgId
+            const allMessage = yield index_1.Message.findAll({
+                where: {
+                    id: {
+                        [sequelize_1.default.Op.gt]: lastMsgId,
+                    },
+                },
+            });
             res.status(200).send({ message: "Message Posted", allMessage, userId });
         }
         catch (error) {
