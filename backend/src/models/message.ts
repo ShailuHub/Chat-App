@@ -4,6 +4,7 @@ import { User } from "./user";
 
 class MessageModel extends Model {
   public id!: number;
+  public usernmae!: string;
   public message!: string;
   public userId!: number;
   public createdAt!: Date;
@@ -17,6 +18,10 @@ MessageModel.init(
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     message: {
       type: DataTypes.TEXT,

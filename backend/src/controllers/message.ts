@@ -8,12 +8,16 @@ const postMessage = async (req: Request, res: Response) => {
   if (userId) {
     try {
       await Message.create({
+        username: req.user?.username,
         message,
         userId,
       });
       res
         .status(200)
-        .send({ message: "Message table created and message posted" });
+        .send({
+          message: "Message table created and message posted",
+          username: req.user?.username,
+        });
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: "Internal server error" });
@@ -21,4 +25,19 @@ const postMessage = async (req: Request, res: Response) => {
   }
 };
 
-export { postMessage };
+const getMessage = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (userId) {
+    try {
+      const allMessage = await Message.findAll();
+      res.status(200).send({ message: "Message Posted", allMessage, userId });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: "Internal server error" });
+    }
+  } else {
+    res.status(401).send({ message: "Unauthorised user" });
+  }
+};
+
+export { postMessage, getMessage };

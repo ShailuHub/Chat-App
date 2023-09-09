@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize(
-  "chat-app",
+  "chat_app",
   process.env.DB_USERNAME!,
   process.env.DB_PASSWORD!,
   {

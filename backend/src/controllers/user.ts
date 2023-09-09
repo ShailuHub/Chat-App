@@ -107,4 +107,17 @@ const getChatPage = async (req: Request, res: Response) => {
   res.status(200).sendFile(filePath);
 };
 
-export { postSignup, getSignup, getLogin, postLogin, getChatPage };
+const getAllUsers = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (userId) {
+    try {
+      const allUsers = await User.findAll();
+      res.status(200).send({ message: "Users posted", allUsers });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: "Internal server error" });
+    }
+  }
+};
+
+export { postSignup, getSignup, getLogin, postLogin, getChatPage, getAllUsers };

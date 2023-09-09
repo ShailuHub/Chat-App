@@ -9,21 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postMessage = void 0;
+exports.getMessage = exports.postMessage = void 0;
 const index_1 = require("../models/index");
 const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b, _c;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
     const { message } = req.body;
     if (userId) {
         try {
             yield index_1.Message.create({
+                username: (_b = req.user) === null || _b === void 0 ? void 0 : _b.username,
                 message,
                 userId,
             });
             res
                 .status(200)
-                .send({ message: "Message table created and message posted" });
+                .send({
+                message: "Message table created and message posted",
+                username: (_c = req.user) === null || _c === void 0 ? void 0 : _c.username,
+            });
         }
         catch (error) {
             console.log(error);
@@ -32,3 +36,21 @@ const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.postMessage = postMessage;
+const getMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
+    const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.id;
+    if (userId) {
+        try {
+            const allMessage = yield index_1.Message.findAll();
+            res.status(200).send({ message: "Message Posted", allMessage, userId });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).send({ message: "Internal server error" });
+        }
+    }
+    else {
+        res.status(401).send({ message: "Unauthorised user" });
+    }
+});
+exports.getMessage = getMessage;

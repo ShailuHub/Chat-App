@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getChatPage = exports.postLogin = exports.getLogin = exports.getSignup = exports.postSignup = void 0;
+exports.getAllUsers = exports.getChatPage = exports.postLogin = exports.getLogin = exports.getSignup = exports.postSignup = void 0;
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const user_1 = require("../models/user");
@@ -106,3 +106,18 @@ const getChatPage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     res.status(200).sendFile(filePath);
 });
 exports.getChatPage = getChatPage;
+const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (userId) {
+        try {
+            const allUsers = yield user_1.User.findAll();
+            res.status(200).send({ message: "Users posted", allUsers });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).send({ message: "Internal server error" });
+        }
+    }
+});
+exports.getAllUsers = getAllUsers;

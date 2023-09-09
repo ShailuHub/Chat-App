@@ -17,6 +17,10 @@ MessageModel.init({
         allowNull: false,
         primaryKey: true,
     },
+    username: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+    },
     message: {
         type: sequelize_1.DataTypes.TEXT,
     },

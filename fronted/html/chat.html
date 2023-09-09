@@ -37,24 +37,12 @@
             C<span class="text-light">hats</span>
           </h4>
           <hr class="text-success" />
-          <div class="chat-row d-flex">
-            <div class="row-img">
-              <img
-                src="../images/avatar.png"
-                alt="avatar.png"
-                style="width: 60px; height: 60px"
-              />
-            </div>
-            <div
-              class="row-text d-flex justify-content-center align-items-center mx-3 text-light"
-            >
-              <p>Shailesh Kumar</p>
-            </div>
+          <div id="all-users">
+            <!-- All user -->
           </div>
-          <hr class="text-success" />
         </div>
       </div>
-
+      <!-- Message sender name  -->
       <div class="container right-container">
         <div class="right-container-user pt-3">
           <div class="chat-row d-flex">
@@ -65,14 +53,21 @@
                 style="width: 60px; height: 60px"
               />
             </div>
-            <div
-              class="row-text d-flex justify-content-center align-items-center mx-3 text-light"
-            >
-              <p>Shailesh Kumar</p>
+            <div class="d-flex align-items-center text-light">
+              <p>shailesh kumar</p>
             </div>
           </div>
           <hr class="text-success" />
         </div>
+
+        <!-- Message stack -->
+        <div class="container message-stack">
+          <div class="message-stack-display" id="message-box">
+            <!-- Message div  -->
+          </div>
+        </div>
+
+        <!-- Message Menu -->
         <div class="container right-container-menu">
           <form action="" id="message-form">
             <div class="input-group mb-3">
