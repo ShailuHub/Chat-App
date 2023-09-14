@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta information -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- External CSS libraries -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <!-- Custom CSS stylesheets -->
     <link rel="stylesheet" href="../css/signup.css" />
+    <link rel="stylesheet" href="../css/common.css" />
     <title>Chat App</title>
   </head>
   <body>
+    <!-- Header section -->
     <header class="container-fluid custom-header">
       <div
         class="container px-2 mb-2 d-flex justify-content-between align-items-center"
       >
+        <!-- Logo -->
         <div class="d-flex justify-content-start align-items-center">
           <a href="#">
             <h3 class="text-light">
@@ -25,6 +31,7 @@
             </h3>
           </a>
         </div>
+        <!-- Login button -->
         <div class="d-flex justify-content-end align-items-center gap-3">
           <button class="btn btn-success py-2 px-5" id="login-main-btn">
             Login
@@ -32,37 +39,50 @@
         </div>
       </div>
     </header>
+    <!-- Main content container -->
     <div class="container mt-5">
+      <!-- Registration success message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
         id="reg-success"
       >
-        Registration<span class="text-success"> Successfull !!</span>
+        Registration<span class="text-success"> Successful !!</span>
       </h4>
+      <!-- Registration unsuccessful message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
         id="reg-unsuccess"
       >
-        Registration<span class="text-success"> Unsucessfull !!</span>
+        Registration<span class="text-danger"> Unsuccessful !!</span>
       </h4>
+      <!-- Password mismatch error message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
         id="pass-unsuccess"
       >
-        Password and confirm password not<span class="text-danger">
-          Matched</span
-        >
+        Password and confirm password
+        <span class="text-danger">not matched</span>
       </h4>
+      <!-- Email or phone already exists message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
         id="email-unsuccess"
       >
-        Email already<span class="text-danger"> Exists</span>
+        Email or phone already <span class="text-danger">exists</span>
       </h4>
+      <!-- Invalid phone number message -->
+      <h4
+        class="text-center text-light mb-4"
+        style="display: none"
+        id="phone-unsuccess"
+      >
+        Enter <span class="text-danger">10 digit valid number</span>
+      </h4>
+      <!-- Internal server error message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
@@ -70,6 +90,7 @@
       >
         Internal server<span class="text-danger"> Error</span>
       </h4>
+      <!-- Registration form -->
       <div class="container custom-container">
         <form
           action=""
@@ -77,17 +98,19 @@
           class="d-flex align-content-center justify-content-center flex-column"
           method="POST"
         >
+          <!-- Name input field -->
           <div class="input-group mb-3">
             <span class="input-group-text bg-success text-light">Name</span>
             <input
               type="text"
-              class="form-control"
+              class="form-control text-capitalize"
               placeholder="name"
               aria-label="name"
               required
               id="name"
             />
           </div>
+          <!-- Email input field -->
           <div class="input-group mb-3">
             <span class="input-group-text bg-success text-light">Email</span>
             <input
@@ -99,17 +122,19 @@
               id="email"
             />
           </div>
+          <!-- Phone input field -->
           <div class="input-group mb-3">
             <span class="input-group-text bg-success text-light">+91</span>
             <input
               type="tel"
               class="form-control"
-              placeholder="phone"
+              placeholder="10 digit phone"
               aria-label="phone"
               required
               id="phone"
             />
           </div>
+          <!-- Password input field -->
           <div class="input-group mb-3">
             <span class="input-group-text text-light"
               ><img src="../images/lock.png" alt="lock.png" class="lock-img"
@@ -123,6 +148,7 @@
               id="password"
             />
           </div>
+          <!-- Confirm Password input field -->
           <div class="input-group mb-3">
             <span class="input-group-text text-light"
               ><img src="../images/lock.png" alt="lock.png" class="lock-img"
@@ -136,6 +162,7 @@
               id="confirm-password"
             />
           </div>
+          <!-- Register button -->
           <div class="input-group mb-1 mt-4">
             <input
               type="submit"
@@ -147,6 +174,7 @@
         </form>
       </div>
     </div>
+    <!-- External JavaScript libraries and scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../script/signup.js"></script>
   </body>

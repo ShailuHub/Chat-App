@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <!-- External CSS stylesheets -->
+    <link rel="stylesheet" href="../css/contact.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <title>Chat App</title>
+  </head>
+  <body>
+    <!-- Create Group Container -->
+    <div id="create-group-container" style="display: none">
+      <div class="container" id="group-container">
+        <div class="input-group mb-3" style="width: 70%">
+          <input
+            type="text"
+            class="form-control text-capitalize"
+            placeholder="Group name"
+            aria-label="Group name"
+            required
+            id="groupName"
+          />
+        </div>
+        <div>
+          <button class="btn btn-light mx-2" id="cancel-create-group">
+            Cancel
+          </button>
+          <button class="btn btn-success" id="create-group-btn">create</button>
+        </div>
+      </div>
+      <div id="overlay"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div
+      class="container d-flex justify-content-center align-items-center"
+      id="main-container"
+    >
+      <div class="container" id="custom-container">
+        <p
+          id="select-contact"
+          class="text-light mt-0 pt-3 pb-3 text-center"
+          style="display: none"
+        >
+          Please select <span class="text-success">contacts</span>
+          <span id="next-btn" style="display: none" class="mx-4"
+            ><a href="#"><button class="btn bg-success">next</button></a></span
+          >
+        </p>
+
+        <!-- Add User and Group Buttons -->
+        <div id="add-user-grp" class="pt-3">
+          <div class="chat-row d-flex gap-4">
+            <div class="row-img">
+              <img
+                src="../images/avatar.png"
+                alt="avatar.png"
+                style="width: 60px; height: 60px"
+              />
+            </div>
+            <div class="d-flex align-items-center text-light">
+              <button class="btn btn-success" id="newGroupBtn">
+                New group
+              </button>
+            </div>
+          </div>
+          <hr class="text-success" />
+          <div class="chat-row d-flex gap-4">
+            <div class="row-img">
+              <img
+                src="../images/avatar.png"
+                alt="avatar.png"
+                style="width: 60px; height: 60px"
+              />
+            </div>
+            <div class="d-flex align-items-center text-light">
+              <button class="btn btn-success" id="newContactBtn">
+                New Contact
+              </button>
+            </div>
+          </div>
+          <hr class="text-success" />
+        </div>
+
+        <!-- Chat List Container -->
+        <div id="chat-list-container" style="display: none">
+          <div id="chat-list-inner-container">
+            <hr class="text-success" />
+            <div id="all-users">
+              <!-- All user chat list goes here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Contact Form -->
+        <div id="new-contact-container" style="display: none" class="mt-5">
+          <form action="" id="form" method="POST">
+            <p class="text-light text-center" id="direction-to-user">
+              Enter <span class="text-danger">10</span> digit
+              <span class="text-success">valid</span> phone number
+            </p>
+            <p
+              class="text-light text-center"
+              id="phone-unsuccess"
+              style="display: none"
+            >
+              <span class="text-danger">Invalid</span> phone number
+            </p>
+            <p
+              class="text-light text-center"
+              id="internal-unsuccess"
+              style="display: none"
+            >
+              <span class="text-danger">Internal</span> server error
+            </p>
+            <div class="input-group mb-3">
+              <span class="input-group-text bg-success text-light">+91</span>
+              <input
+                type="tel"
+                class="form-control"
+                placeholder="phone"
+                aria-label="phone"
+                required
+                id="phone"
+              />
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text bg-success text-light">Name</span>
+              <input
+                type="text"
+                class="form-control text-capitalize"
+                placeholder="name"
+                aria-label="name"
+                required
+                id="username"
+              />
+            </div>
+            <input
+              type="submit"
+              class="btn btn-success"
+              value="Add Contact"
+              id="add-contact"
+            />
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- External JavaScript libraries and scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../script/contact.js"></script>
+  </body>
+</html>

@@ -3,33 +3,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Message = void 0;
+exports.GroupMessage = void 0;
 const sequelize_1 = require("sequelize");
 const database_1 = __importDefault(require("../utils/database"));
 const user_1 = require("./user");
-const conversation_1 = require("./conversation");
-class MessageModel extends sequelize_1.Model {
+const group_1 = require("./group");
+class GroupMessageModel extends sequelize_1.Model {
 }
-exports.Message = MessageModel;
-MessageModel.init({
-    messageId: {
+exports.GroupMessage = GroupMessageModel;
+GroupMessageModel.init({
+    id: {
         type: sequelize_1.DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true,
     },
-    conversationId: {
+    userId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
-    sendername: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    message: {
+    groupMsg: {
         type: sequelize_1.DataTypes.TEXT,
     },
-    senderId: {
+    groupId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
@@ -41,13 +37,10 @@ MessageModel.init({
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
     },
-}, { sequelize: database_1.default, modelName: "Message" });
+}, { sequelize: database_1.default, modelName: "GroupMessage" });
 //Association
-user_1.User.hasMany(MessageModel, {
-    foreignKey: "senderId",
-    onDelete: "CASCADE",
-});
-conversation_1.Conversation.hasMany(MessageModel, {
-    foreignKey: "conversationId",
+user_1.User.hasMany(GroupMessageModel, { foreignKey: "userId", onDelete: "CASCADE" });
+group_1.Group.hasMany(GroupMessageModel, {
+    foreignKey: "groupId",
     onDelete: "CASCADE",
 });

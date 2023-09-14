@@ -18,6 +18,8 @@ app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
 app.use(index_1.userRouter);
 app.use(index_1.messageRouter);
+app.use(index_1.contactRouter);
+app.use(index_1.groupRouter);
 database_1.default
     .sync()
     .then(() => {

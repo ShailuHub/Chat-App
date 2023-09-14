@@ -1,4 +1,5 @@
 import userRouter from "../routes/user";
 import messageRouter from "../routes/message";
-
-export { userRouter, messageRouter };
+import contactRouter from "../routes/contact";
+import groupRouter from "../routes/group";
+export { userRouter, messageRouter, contactRouter, groupRouter };

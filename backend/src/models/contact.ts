@@ -1,44 +1,45 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../utils/database";
+import { User } from "./user";
 
-class UserModel extends Model {
-  public userId!: number;
-  public username!: string;
-  public email!: string;
-  public password!: string;
+class ContactModel extends Model {
+  public contactId!: number;
   public phone!: string;
+  public username!: string;
+  public userId!: number;
+  public addedId!: number;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
 
-UserModel.init(
+ContactModel.init(
   {
-    userId: {
+    contactId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
     },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    phone: {
-      type: DataTypes.STRING,
+    addedId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
     },
   },
-  { sequelize, modelName: "User" }
+  { sequelize, modelName: "Contact" }
 );
 
-export { UserModel as User };
+User.hasMany(ContactModel, { foreignKey: "userId", onDelete: "CASCADE" });
+
+export { ContactModel as Contact };

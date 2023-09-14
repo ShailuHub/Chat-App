@@ -9,43 +9,34 @@
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <!-- External CSS stylesheets -->
     <link rel="stylesheet" href="../css/chat.css" />
+    <link rel="stylesheet" href="../css/common.css" />
     <title>Chat App</title>
   </head>
   <body>
-    <div class="container-fluid main-container px-5">
-      <div class="container left-container">
-        <form action="" id="form">
-          <div class="input-group mb-3">
-            <input
-              type="search"
-              class="form-control"
-              id="search"
-              placeholder="search..."
-            />
-            <span class="input-group-text"
-              ><img
-                src="../images/search.png"
-                alt="search.png"
-                style="width: 25px; height: 25px"
-            /></span>
-          </div>
-        </form>
-        <div id="chat-list-container">
-          <hr class="text-success" />
-          <h4 class="text-success mb-4">
-            C<span class="text-light">hats</span>
-          </h4>
-          <hr class="text-success" />
-          <div id="all-users">
-            <!-- All user -->
-          </div>
+    <!-- Delete Chat Confirmation Dialog -->
+    <div id="delete-main-container" style="display: none">
+      <div class="container" id="delete-container">
+        <h4 class="text-light">
+          <span class="text-danger">Delete</span> this chat?
+        </h4>
+        <div>
+          <button class="btn btn-light mx-2" id="cancel-delete-chat">
+            Cancel
+          </button>
+          <button class="btn btn-success" id="delete-chat">Delete chat</button>
         </div>
       </div>
-      <!-- Message sender name  -->
-      <div class="container right-container">
-        <div class="right-container-user pt-3">
-          <div class="chat-row d-flex">
+      <div id="overlay"></div>
+    </div>
+
+    <!-- Main Container for Chat App -->
+    <div class="container-fluid main-container px-5">
+      <div class="container left-container">
+        <!-- Add group and add contact section -->
+        <div class="mt-5" id="add-user-grp" style="display: none">
+          <div class="chat-row d-flex gap-4">
             <div class="row-img">
               <img
                 src="../images/avatar.png"
@@ -54,16 +45,72 @@
               />
             </div>
             <div class="d-flex align-items-center text-light">
-              <p>shailesh kumar</p>
+              <button class="btn btn-success">New group</button>
+            </div>
+          </div>
+          <hr class="text-success" />
+          <div class="chat-row d-flex gap-4">
+            <div class="row-img">
+              <img
+                src="../images/avatar.png"
+                alt="avatar.png"
+                style="width: 60px; height: 60px"
+              />
+            </div>
+            <div class="d-flex align-items-center text-light">
+              <button class="btn btn-success">New Contact</button>
             </div>
           </div>
           <hr class="text-success" />
         </div>
 
-        <!-- Message stack -->
+        <!-- Search form and chat list -->
+        <div id="left-container">
+          <p class="text-white mt-3">
+            Welcome <span class="text-success" id="owner-name">Shailu</span>
+          </p>
+          <form action="" id="form">
+            <div class="input-group mb-3">
+              <input
+                type="search"
+                class="form-control"
+                id="search"
+                placeholder="search..."
+              />
+              <span class="input-group-text"
+                ><img
+                  src="../images/search.png"
+                  alt="search.png"
+                  style="width: 25px; height: 25px"
+              /></span>
+            </div>
+          </form>
+          <div id="chat-list-container">
+            <hr class="text-success" />
+            <h4 class="text-success mb-4">
+              C<span class="text-light">hats</span>
+            </h4>
+            <hr class="text-success" />
+            <div id="all-users">
+              <!-- All user chat list goes here -->
+            </div>
+          </div>
+          <div id="add-user-btn">
+            <img src="../images/add-user-btn.png" alt="add-user-btn" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Message sender name and message stack -->
+      <div class="container right-container" id="right-container">
+        <div class="right-container-user pt-3" id="active-user">
+          <!-- Active User section -->
+        </div>
+
+        <!-- Message stack display -->
         <div class="container message-stack">
           <div class="message-stack-display" id="message-box">
-            <!-- Message div  -->
+            <!-- Messages display goes here -->
           </div>
         </div>
 
@@ -107,6 +154,8 @@
         </div>
       </div>
     </div>
+
+    <!-- External JavaScript libraries and scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../script/chat.js"></script>
   </body>

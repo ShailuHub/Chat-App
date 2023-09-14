@@ -1,14 +1,6 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
-  background-color: #0e1630;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-
 h3,
 h4 {
   line-height: 3rem;

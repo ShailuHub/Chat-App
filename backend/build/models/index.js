@@ -1,7 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Message = exports.User = void 0;
+exports.Contact = exports.GroupChat = exports.Member = exports.Conversation = exports.Message = exports.User = void 0;
 const user_1 = require("./user");
 Object.defineProperty(exports, "User", { enumerable: true, get: function () { return user_1.User; } });
 const message_1 = require("./message");
 Object.defineProperty(exports, "Message", { enumerable: true, get: function () { return message_1.Message; } });
+const conversation_1 = require("./conversation");
+Object.defineProperty(exports, "Conversation", { enumerable: true, get: function () { return conversation_1.Conversation; } });
+const member_1 = require("./member");
+Object.defineProperty(exports, "Member", { enumerable: true, get: function () { return member_1.Member; } });
+const group_1 = require("./group");
+Object.defineProperty(exports, "GroupChat", { enumerable: true, get: function () { return group_1.GroupChat; } });
+const contact_1 = require("./contact");
+Object.defineProperty(exports, "Contact", { enumerable: true, get: function () { return contact_1.Contact; } });

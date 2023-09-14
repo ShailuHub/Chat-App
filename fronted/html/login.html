@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta information -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- External CSS libraries -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <!-- Custom CSS stylesheets -->
     <link rel="stylesheet" href="../css/signup.css" />
+    <link rel="stylesheet" href="../css/common.css" />
     <title>Chat App</title>
   </head>
   <body>
+    <!-- Header section -->
     <header class="container-fluid custom-header">
       <div
         class="container px-2 mb-2 d-flex justify-content-between align-items-center"
       >
+        <!-- Logo -->
         <div class="d-flex justify-content-start align-items-center">
           <a href="#">
             <h3 class="text-light">
@@ -25,6 +31,7 @@
             </h3>
           </a>
         </div>
+        <!-- Signup button -->
         <div class="d-flex justify-content-end align-items-center gap-3">
           <button class="btn btn-success py-2 px-5" id="signup-main-btn">
             Signup
@@ -32,14 +39,17 @@
         </div>
       </div>
     </header>
+    <!-- Main content container -->
     <div class="container mt-5">
+      <!-- Success message on user login -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
         id="log-success"
       >
-        User Logged in<span class="text-success"> Successfull !!</span>
+        User Logged in<span class="text-success"> Successfully !!</span>
       </h4>
+      <!-- Internal server error message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
@@ -47,6 +57,7 @@
       >
         Internal server<span class="text-danger"> Error</span>
       </h4>
+      <!-- Invalid email or password message -->
       <h4
         class="text-center text-light mb-4"
         style="display: none"
@@ -54,6 +65,7 @@
       >
         Invalid<span class="text-danger"> email or password</span>
       </h4>
+      <!-- Login form -->
       <div class="container custom-container">
         <form
           action=""
@@ -61,6 +73,7 @@
           class="d-flex align-content-center justify-content-center flex-column"
           method="POST"
         >
+          <!-- Email input field -->
           <div class="input-group mb-3">
             <span class="input-group-text bg-success text-light">Email</span>
             <input
@@ -72,6 +85,7 @@
               id="email"
             />
           </div>
+          <!-- Password input field -->
           <div class="input-group mb-3">
             <span class="input-group-text text-light"
               ><img src="../images/lock.png" alt="lock.png" class="lock-img"
@@ -85,6 +99,7 @@
               id="password"
             />
           </div>
+          <!-- Login button -->
           <div class="input-group mb-1 mt-4">
             <input
               class="form-control btn btn-success bg-success"
@@ -93,6 +108,7 @@
               value="Login"
             />
           </div>
+          <!-- Forgot password button -->
           <div class="input-group mb-1 mt-4">
             <button
               class="form-control btn btn-success bg-success"
@@ -104,6 +120,7 @@
         </form>
       </div>
     </div>
+    <!-- External JavaScript libraries and scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../script/login.js"></script>
   </body>

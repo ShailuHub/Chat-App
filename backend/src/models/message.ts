@@ -1,32 +1,38 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../utils/database";
 import { User } from "./user";
+import { Conversation } from "./conversation";
 
 class MessageModel extends Model {
-  public id!: number;
-  public usernmae!: string;
+  public messageId!: number;
+  public conversationId!: number;
+  public sendername!: string;
   public message!: string;
-  public userId!: number;
+  public senderId!: number;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
 
 MessageModel.init(
   {
-    id: {
+    messageId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
     },
-    username: {
+    conversationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    sendername: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     message: {
       type: DataTypes.TEXT,
     },
-    userId: {
+    senderId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -44,7 +50,11 @@ MessageModel.init(
 
 //Association
 User.hasMany(MessageModel, {
-  foreignKey: "userId",
+  foreignKey: "senderId",
+  onDelete: "CASCADE",
+});
+Conversation.hasMany(MessageModel, {
+  foreignKey: "conversationId",
   onDelete: "CASCADE",
 });
 

@@ -20,7 +20,7 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         const secret = process.env.JWT_SECRET;
         if (token && secret) {
             const decToken = (yield jsonwebtoken_1.default.verify(token, secret));
-            const user = yield user_1.User.findOne({ where: { id: decToken.id } });
+            const user = yield user_1.User.findOne({ where: { userId: decToken.id } });
             if (user) {
                 req.user = user;
             }

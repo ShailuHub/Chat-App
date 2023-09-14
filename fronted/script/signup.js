@@ -9,6 +9,7 @@ const regUnSuccess = document.getElementById("reg-unsuccess");
 const passUnSuccess = document.getElementById("pass-unsuccess");
 const emailUnsuccess = document.getElementById("email-unsuccess");
 const internalUnsuccess = document.getElementById("internal-unsuccess");
+const phoneUnsuccess = document.getElementById("phone-unsuccess");
 const login = document.getElementById("login-main-btn");
 const baseURL = "http://localhost:3000";
 
@@ -53,6 +54,12 @@ async function postUserDetails(event) {
       internalUnsuccess.style.display = "block";
       setTimeout(() => {
         internalUnsuccess.style.display = "none";
+        form.reset();
+      }, 3000);
+    } else if (error.response.status === 405) {
+      phoneUnsuccess.style.display = "block";
+      setTimeout(() => {
+        phoneUnsuccess.style.display = "none";
         form.reset();
       }, 3000);
     }

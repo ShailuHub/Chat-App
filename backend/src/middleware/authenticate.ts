@@ -18,7 +18,7 @@ const authenticate = async (
     const secret: Secret | undefined = process.env.JWT_SECRET;
     if (token && secret) {
       const decToken = (await jwt.verify(token, secret)) as JwtPayload;
-      const user = await User.findOne({ where: { id: decToken.id } });
+      const user = await User.findOne({ where: { userId: decToken.id } });
       if (user) {
         req.user = user;
       } else {
