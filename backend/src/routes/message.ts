@@ -7,6 +7,8 @@ import {
   getOneToOneMsg,
   getGroupMsg,
   postGroupMsg,
+  MsgFromUnknown,
+  unknownMsg,
 } from "../controllers/message";
 
 // Import your authentication middleware
@@ -24,5 +26,14 @@ router.get("/user/chat/group/msg/:groupId", authenticate, getGroupMsg);
 
 // Route to send a group message
 router.post("/user/chat/group/msg/:groupId", authenticate, postGroupMsg);
+
+// Route to recieve any message from unknown number
+router.get("/user/chat/msg/unknown", authenticate, MsgFromUnknown);
+
+router.get(
+  "/user/chat/usknownMsg/msg/:userId/:conversationId",
+  authenticate,
+  unknownMsg
+);
 
 export default router;

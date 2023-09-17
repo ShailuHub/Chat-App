@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
+exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
 const index_1 = require("../models/index");
 const sequelize_1 = __importDefault(require("sequelize"));
 // Handle POST request to create a new message
@@ -104,22 +104,24 @@ const getOneToOneMsg = (req, res) => __awaiter(void 0, void 0, void 0, function*
                             [sequelize_1.default.Op.and]: [{ userId: user1_id }, { addedId: user2_id }],
                         },
                     });
-                    if (user) {
-                        try {
-                            // Retrieve one-to-one messages
-                            const oneToOneMsg = yield index_1.Message.findAll({
-                                where: { conversationId: isConversationExists.conversationId },
-                            });
+                    try {
+                        // Retrieve one-to-one messages
+                        const oneToOneMsg = yield index_1.Message.findAll({
+                            where: { conversationId: isConversationExists.conversationId },
+                        });
+                        if (user) {
                             res
                                 .status(201)
                                 .send({ oneToOneMsg, user1_id, username: user.username });
                         }
-                        catch (error) {
-                            console.log(error);
+                        else {
+                            res
+                                .status(201)
+                                .send({ oneToOneMsg, user1_id, username: "anonymous" });
                         }
                     }
-                    else {
-                        res.status(405).send({ message: "No contact" });
+                    catch (error) {
+                        console.log(error);
                     }
                 }
                 catch (error) {
@@ -199,3 +201,72 @@ const postGroupMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.postGroupMsg = postGroupMsg;
+const MsgFromUnknown = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _j;
+    const userId = (_j = req.user) === null || _j === void 0 ? void 0 : _j.userId;
+    const allUnKnownMsg = [];
+    try {
+        const allOneSidedCoversation = yield index_1.Conversation.findAll({
+            where: { user2_id: userId },
+            attributes: ["conversationId", "user1_id"],
+        });
+        // Use Promise.all to handle asynchronous operations concurrently
+        const msgPromises = allOneSidedCoversation.map((itr) => __awaiter(void 0, void 0, void 0, function* () {
+            const isSaved = yield index_1.Contact.findOne({
+                where: { userId: userId, addedId: itr.user1_id },
+            });
+            if (!isSaved) {
+                const msg = yield index_1.Message.findAll({
+                    where: { conversationId: itr.conversationId, senderId: itr.user1_id },
+                    include: [{ model: index_1.User }],
+                });
+                return msg;
+            }
+            return null; // Return null for saved contacts
+        }));
+        // Wait for all promises to resolve
+        const messages = yield Promise.all(msgPromises);
+        // Filter out null values (saved contacts) and flatten the result
+        allUnKnownMsg.push(...messages.filter((msg) => msg !== null));
+        res.status(200).send({ allUnKnownMsg, userId: userId });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.MsgFromUnknown = MsgFromUnknown;
+// const MsgFromUnknown = async (req: Request, res: Response) => {
+//   const userId = req.user?.userId;
+//   try {
+//     const allUnKnownMsg = await Conversation.findAll({
+//       where: { user2_id: userId },
+//       include: [
+//         {
+//           model: Message,
+//           attributes: ["message"],
+//           include: [{ model: User, attributes: ["phone"] }],
+//         },
+//       ],
+//     });
+//     res.status(200).send({ allUnKnownMsg });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({ message: "Internal server error" });
+//   }
+// };
+const unknownMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = Number(req.params.userId);
+    const conversationId = Number(req.params.conversationId);
+    try {
+        const unknownMsg = yield index_1.Message.findAll({
+            where: { conversationId, senderId: userId },
+        });
+        res.status(200).send({ unknownMsg });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.unknownMsg = unknownMsg;

@@ -162,13 +162,11 @@ const getAllUsers = async (req: Request, res: Response) => {
   if (userId) {
     try {
       const allUsers = await Contact.findAll({ where: { userId: userId } });
-      res
-        .status(200)
-        .send({
-          message: "Users posted",
-          allUsers,
-          ownerName: req.user?.username,
-        });
+      res.status(200).send({
+        message: "Users posted",
+        allUsers,
+        ownerName: req.user?.username,
+      });
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: "Internal server error" });

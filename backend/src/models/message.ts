@@ -11,6 +11,7 @@ class MessageModel extends Model {
   public senderId!: number;
   public createdAt!: Date;
   public updatedAt!: Date;
+  public phone!: string;
 }
 
 MessageModel.init(
@@ -53,6 +54,7 @@ User.hasMany(MessageModel, {
   foreignKey: "senderId",
   onDelete: "CASCADE",
 });
+MessageModel.belongsTo(User, { foreignKey: "senderId", onDelete: "CASCADE" });
 Conversation.hasMany(MessageModel, {
   foreignKey: "conversationId",
   onDelete: "CASCADE",

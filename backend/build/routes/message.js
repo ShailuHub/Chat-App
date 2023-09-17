@@ -18,4 +18,7 @@ router.get("/user/chat/oneToOne/msg/:user2_id", authenticate_1.default, message_
 router.get("/user/chat/group/msg/:groupId", authenticate_1.default, message_1.getGroupMsg);
 // Route to send a group message
 router.post("/user/chat/group/msg/:groupId", authenticate_1.default, message_1.postGroupMsg);
+// Route to recieve any message from unknown number
+router.get("/user/chat/msg/unknown", authenticate_1.default, message_1.MsgFromUnknown);
+router.get("/user/chat/usknownMsg/msg/:userId/:conversationId", authenticate_1.default, message_1.unknownMsg);
 exports.default = router;

@@ -3,8 +3,15 @@ const messageForm = document.getElementById("message-form");
 const message = document.getElementById("message");
 const messageBox = document.getElementById("message-box");
 const allUsers = document.getElementById("all-users");
+const allMembers = document.getElementById("all-group-users");
 const activeUser = document.getElementById("active-user");
 const addUserBtn = document.getElementById("add-user-btn");
+const leftContainer = document.getElementById("left-container");
+const leftMainContainer = document.getElementsByClassName("left-container");
+const rightMainContainer = document.getElementsByClassName("right-container");
+const rightContainer = document.getElementById("right-container");
+const chatHeading = document.getElementById("chat-heading");
+const memberHeading = document.getElementById("member-heading");
 
 // API Base URL
 const baseURL = "http://localhost:3000";
@@ -21,6 +28,7 @@ async function postMessage(event) {
   event.preventDefault();
   const details = { message: message.value };
   const token = localStorage.getItem("token");
+
   try {
     if (user2_id > 0) {
       const response = await axios.post(
@@ -28,6 +36,7 @@ async function postMessage(event) {
         details,
         { headers: { Authorization: token } }
       );
+
       // Display the user's message
       displayMessage("You", details.message, "user");
       scrollBarDown();
@@ -36,6 +45,7 @@ async function postMessage(event) {
         messageForm.reset();
       }
     }
+
     if (groupId > 0) {
       const response = await axios.post(
         `${baseURL}/user/chat/group/msg/${groupId}`,
@@ -46,6 +56,7 @@ async function postMessage(event) {
       // Display the user's message
       displayMessage("You", details.message, "user");
       scrollBarDown();
+
       if (response.status === 200) {
         messageForm.reset();
       }
@@ -58,6 +69,7 @@ async function postMessage(event) {
 // Function to retrieve and display one-to-one messages
 async function getoneToMessage() {
   const token = localStorage.getItem("token");
+
   try {
     const response = await axios.get(
       `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
@@ -65,7 +77,9 @@ async function getoneToMessage() {
         headers: { Authorization: token },
       }
     );
+
     messageBox.innerHTML = "";
+
     // Display new one-to-one messages
     response.data.oneToOneMsg.forEach((msg) => {
       const senderName =
@@ -78,38 +92,10 @@ async function getoneToMessage() {
         msg.senderId === response.data.user1_id ? "user" : "otheruser"
       );
     });
-    scrollBarDown();
-  } catch (error) {
-    console.error(error);
-  }
-}
 
-// Function to retrieve and display Group messages
-async function getGroupMessage() {
-  const token = localStorage.getItem("token");
-  try {
-    const response = await axios.get(
-      `${baseURL}/user/chat/group/msg/${groupId}`,
-      {
-        headers: { Authorization: token },
-      }
-    );
-    messageBox.innerHTML = "";
-    console.log(response.data);
-    messageBox.innerHTML = "";
-    // Display new one-to-one messages
-    response.data.groupMsg.forEach((msg) => {
-      const senderName =
-        msg.senderId === response.data.userId ? "You" : msg.sendername;
-      displayMessage(
-        senderName,
-        msg.message,
-        msg.senderId === response.data.userId ? "user" : "otheruser"
-      );
-    });
     scrollBarDown();
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -121,10 +107,19 @@ async function getAllUsers() {
     const response = await axios.get(`${baseURL}/user/chat/list`, {
       headers: { Authorization: token },
     });
+
     getOwnerName(response.data.ownerName);
+
     if (response.data.allUsers.length > 0) {
       response.data.allUsers.forEach((user) => {
-        displayUsers(user.username, user.addedId, user.phone);
+        displayUsers(
+          user.username,
+          user.addedId,
+          user.phone,
+          false,
+          0,
+          "users"
+        );
       });
     }
   } catch (error) {
@@ -135,10 +130,12 @@ async function getAllUsers() {
 // Function to retrieve and display all group
 async function getAllGroup() {
   const token = localStorage.getItem("token");
+
   try {
     const response = await axios.get(`${baseURL}/user/get/group`, {
       headers: { Authorization: token },
     });
+
     if (response.data.allGroup.length > 0) {
       response.data.allGroup.forEach((group) => {
         displayGroup(
@@ -154,58 +151,6 @@ async function getAllGroup() {
   }
 }
 
-// Function to display a message in the message box
-function displayMessage(username, message, user) {
-  const div = document.createElement("div");
-  div.classList.add("container");
-  const p = document.createElement("p");
-  p.innerHTML = `${username}: ${message}`;
-  p.classList.add("text-light");
-  div.appendChild(p);
-
-  if (user === "user") {
-    div.classList.add("user");
-  }
-
-  messageBox.appendChild(div);
-}
-
-// Function to display a user in the user list
-function displayUsers(username, userId, phone) {
-  const div = document.createElement("div");
-  div.style.cursor = "pointer";
-  div.innerHTML = `
-    <div class="chat-row d-flex gap-3">
-      <div class="row-img">
-        <img src="../images/avatar.png" alt="avatar.png" style="width: 60px; height: 60px" />
-      </div>
-      <div class="d-flex flex-column text-light">
-        <p>${username}</p>
-        <p style="font-size: small; "><span>+91</span>-${phone}</p>
-      </div>
-      <div class="dropdown" style="display:none">
-        <button class="dropdown-btn">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </button>
-        <div class="dropdown-content">
-          <a href="#" id="delete-contact">Delete Chat</a>
-          <a href="#" id="remove-contact">Remove Contact</a>
-          <a href="#" id="block">Block</a>
-        </div>
-      </div>
-    </div>
-    <hr class="text-success" />
-  `;
-
-  // Add the user ID as a dataset attribute
-  div.dataset.userId = userId;
-  div.dataset.username = username;
-  div.dataset.phone = phone;
-  allUsers.appendChild(div);
-}
-
 // Function to display a group in the user list
 function displayGroup(groupName, groupId, adminId, adminName) {
   const div = document.createElement("div");
@@ -219,17 +164,6 @@ function displayGroup(groupName, groupId, adminId, adminName) {
         <p>${groupName}</p>
         <p style="font-size: small; "><span>created by</span> ${adminName}</p>
       </div>
-      <div class="dropdown" style="display:none">
-        <button class="dropdown-btn">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </button>
-        <div class="dropdown-content">
-          <a href="#" id="delete-contact">Delete Chat</a>
-          <a href="#" id="remove-contact">Remove Group</a>
-        </div>
-      </div>
     </div>
     <hr class="text-success" />
   `;
@@ -241,77 +175,28 @@ function displayGroup(groupName, groupId, adminId, adminName) {
   allUsers.appendChild(div);
 }
 
-// Event listener to handle user selection and dropdowns
-allUsers.addEventListener("mouseover", (event) => {
-  const dropdown = event.target.closest(".chat-row");
-  if (dropdown) {
-    const dropdownDiv = dropdown.querySelector(".dropdown");
-    dropdownDiv.style.display = "block";
-  }
-});
-
-allUsers.addEventListener("mouseout", (event) => {
-  const dropdown = event.target.closest(".chat-row");
-  if (dropdown) {
-    const dropdownDiv = dropdown.querySelector(".dropdown");
-    dropdownDiv.style.display = "none";
-  }
-});
-
-// Event listener for clicks on .dropdown-content using event delegation
 allUsers.addEventListener("click", async (event) => {
-  const toDeleteDiv = event.target.closest(".chat-row");
-  const clickedAnchor = event.target.closest(".dropdown-content a");
-  if (clickedAnchor && clickedAnchor.id === "delete-contact") {
-    const deleteContainer = document.getElementById("delete-main-container");
-    deleteContainer.style.display = "block";
+  const mediaQuery = window.matchMedia("(max-width:992px)");
 
-    // Event listeners for cancel and delete actions
-    const cancel = document.getElementById("cancel-delete-chat");
-    const deleteChat = document.getElementById("delete-chat");
-
-    if (cancel) {
-      cancel.addEventListener("click", () => {
-        window.location.href = "/user/chat";
-      });
-    }
-
-    if (deleteChat && toDeleteDiv) {
-      deleteChat.addEventListener("click", async (event) => {
-        event.preventDefault();
-        const userId = toDeleteDiv.parentElement.dataset.userId;
-        const phone = toDeleteDiv.parentElement.dataset.phone;
-        if (userId && phone) {
-          const token = localStorage.getItem("token");
-          try {
-            const response = await axios.delete(
-              `${baseURL}/user/delete/contact/${phone}/${userId}`,
-              {
-                headers: { Authorization: token },
-              }
-            );
-            if (response.status === 200) {
-              window.location.href = "/user/chat";
-            } else {
-              console.log("Something went wrong");
-            }
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      });
-    }
+  if (mediaQuery.matches) {
+    leftMainContainer[0].style.display = "none";
+    rightMainContainer[0].style.display = "block";
   }
-});
 
-allUsers.addEventListener("click", async (event) => {
   const token = localStorage.getItem("token");
   const clickedElement = event.target;
+
   // Find the closest chat-row element with dataset.userId
   const userChatRow = clickedElement.closest(".chat-row");
-  if (userChatRow.parentElement.dataset.userId) {
-    const userId = Number(userChatRow.parentElement.dataset.userId);
+  const datasetuserId = userChatRow.parentElement.dataset.userId;
+  const datasersenderId = userChatRow.parentElement.dataset.senderId;
+  const datasetConversationId =
+    userChatRow.parentElement.dataset.conversationId;
+
+  if (datasetuserId && !datasetConversationId) {
+    const userId = Number(datasetuserId);
     user2_id = userId;
+
     // Highlight the selected user
     removeAllActiveUserClasses();
     userChatRow.classList.add("active-user-bg");
@@ -322,32 +207,56 @@ allUsers.addEventListener("click", async (event) => {
     // Display user information
     onLineUser(userChatRow.parentElement.dataset.username);
     firstTimeOneToOneMsg = false;
+  } else if (datasetConversationId && datasetConversationId) {
+    const senderId = Number(datasersenderId);
+    user2_id = senderId;
+
+    // Highlight the selected user
+    removeAllActiveUserClasses();
+    userChatRow.classList.add("active-user-bg");
+
+    // Load one-to-one messages for the selected user
+    getoneToMessage();
+
+    // Display user information
+    onLineUser(userChatRow.parentElement.dataset.phone);
+    firstTimeOneToOneMsg = false;
   } else {
     // Find the closest chat-row element with dataset.groupId and dataset.adminId
     if (userChatRow) {
       const group_id = userChatRow.parentElement.dataset.groupId;
-      const chatListItems = allUsers.querySelectorAll(".chat-row");
       groupId = group_id;
+      const groupDetail = {
+        groupId: groupId,
+        groupName: userChatRow.parentElement.dataset.groupName,
+      };
+      localStorage.setItem("groupDetail", JSON.stringify(groupDetail));
 
       removeAllActiveUserClasses();
       userChatRow.classList.add("active-user-bg");
-      getGroupMessage();
 
-      // Display group information
-      onLineUser(userChatRow.parentElement.dataset.groupName);
+      try {
+        const response = await axios.get(`${baseURL}/user/group`);
+
+        if (response.status === 200) {
+          window.location.href = "/user/group";
+        } else {
+          console.log("Something went wrong");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
+
   try {
     if (user2_id) {
-      const response = await axios.get(
-        `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
-        {
-          headers: { Authorization: token },
-        }
-      );
+      await axios.get(`${baseURL}/user/chat/oneToOne/msg/${user2_id}`, {
+        headers: { Authorization: token },
+      });
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 });
 
@@ -358,11 +267,6 @@ function removeAllActiveUserClasses() {
   });
 }
 
-// Function to scroll the message box to the bottom
-function scrollBarDown() {
-  messageBox.scrollTop = messageBox.scrollHeight;
-}
-
 // Event listener to handle message submission
 messageForm.addEventListener("submit", postMessage);
 
@@ -371,32 +275,38 @@ addUserBtn.addEventListener("click", async (event) => {
   window.location.href = "/user/addUser";
 });
 
-function getOwnerName(userName) {
-  const ownerName = document.getElementById("owner-name");
-  ownerName.textContent = userName;
-}
+async function getAllUnknownMsg() {
+  const token = localStorage.getItem("token");
 
-function onLineUser(username) {
-  const div = document.createElement("div");
-  div.innerHTML = `
-    <div class="chat-row d-flex">
-      <div class="row-img">
-        <img
-          src="../images/avatar.png"
-          alt="avatar.png"
-          style="width: 60px; height: 60px"
-        />
-      </div>
-      <div class="d-flex align-items-center text-light">
-        <p>${username}</p>
-      </div>
-    </div>
-    <hr class="text-success" />
-  `;
-  activeUser.innerHTML = "";
-  activeUser.appendChild(div);
+  try {
+    const response = await axios.get(`${baseURL}/user/chat/msg/unknown`, {
+      headers: { Authorization: token },
+    });
+
+    if (response.status === 200) {
+      response.data.allUnKnownMsg.forEach((msg) => {
+        if (msg.length > 0) {
+          const length = msg.length;
+          const lastMsg = msg[length - 1];
+          displayUnKnownUser(
+            lastMsg.User.phone,
+            lastMsg.message,
+            lastMsg.senderId,
+            lastMsg.conversationId,
+            response.data.userId
+          );
+        }
+      });
+    } else {
+      console.log("Something went wrong");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // Initial data retrieval
+getAllUnknownMsg();
 getAllUsers();
 getAllGroup();
+eventTakePlaceOn(allUsers);

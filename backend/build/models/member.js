@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Member = void 0;
 const sequelize_1 = require("sequelize");
 const database_1 = __importDefault(require("../utils/database"));
-const group_1 = require("./group");
+const groupChat_1 = require("./groupChat");
 const user_1 = require("./user");
 class MemberModel extends sequelize_1.Model {
 }
@@ -26,9 +26,15 @@ MemberModel.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
+    isAdmin: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
 }, { sequelize: database_1.default, modelName: "Member" });
 user_1.User.hasMany(MemberModel, { foreignKey: "userId", onDelete: "CASCADE" });
-MemberModel.belongsTo(group_1.GroupChat, {
+MemberModel.belongsTo(groupChat_1.GroupChat, {
     foreignKey: "groupId",
     onDelete: "CASCADE",
 });
+MemberModel.belongsTo(user_1.User, { foreignKey: "userId", onDelete: "CASCADE" });

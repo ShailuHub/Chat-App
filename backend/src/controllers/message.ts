@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import sequelize from "../utils/database";
 import { User, Message, Conversation, Contact } from "../models/index";
-import Sequelize from "sequelize";
+import Sequelize, { where } from "sequelize";
 
 // Handle POST request to create a new message
 const postMessage = async (req: Request, res: Response) => {
@@ -94,21 +94,23 @@ const getOneToOneMsg = async (req: Request, res: Response) => {
             },
           });
 
-          if (user) {
-            try {
-              // Retrieve one-to-one messages
-              const oneToOneMsg = await Message.findAll({
-                where: { conversationId: isConversationExists.conversationId },
-              });
+          try {
+            // Retrieve one-to-one messages
+            const oneToOneMsg = await Message.findAll({
+              where: { conversationId: isConversationExists.conversationId },
+            });
 
+            if (user) {
               res
                 .status(201)
                 .send({ oneToOneMsg, user1_id, username: user.username });
-            } catch (error) {
-              console.log(error);
+            } else {
+              res
+                .status(201)
+                .send({ oneToOneMsg, user1_id, username: "anonymous" });
             }
-          } else {
-            res.status(405).send({ message: "No contact" });
+          } catch (error) {
+            console.log(error);
           }
         } catch (error) {
           console.log(error);
@@ -188,4 +190,83 @@ const postGroupMsg = async (req: Request, res: Response) => {
   }
 };
 
-export { postMessage, getOneToOneMsg, getGroupMsg, postGroupMsg };
+const MsgFromUnknown = async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const allUnKnownMsg = [];
+  try {
+    const allOneSidedCoversation = await Conversation.findAll({
+      where: { user2_id: userId },
+      attributes: ["conversationId", "user1_id"],
+    });
+
+    // Use Promise.all to handle asynchronous operations concurrently
+    const msgPromises = allOneSidedCoversation.map(async (itr) => {
+      const isSaved = await Contact.findOne({
+        where: { userId: userId, addedId: itr.user1_id },
+      });
+
+      if (!isSaved) {
+        const msg = await Message.findAll({
+          where: { conversationId: itr.conversationId, senderId: itr.user1_id },
+          include: [{ model: User }],
+        });
+        return msg;
+      }
+      return null; // Return null for saved contacts
+    });
+
+    // Wait for all promises to resolve
+    const messages = await Promise.all(msgPromises);
+
+    // Filter out null values (saved contacts) and flatten the result
+    allUnKnownMsg.push(...messages.filter((msg) => msg !== null));
+
+    res.status(200).send({ allUnKnownMsg, userId: userId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+// const MsgFromUnknown = async (req: Request, res: Response) => {
+//   const userId = req.user?.userId;
+//   try {
+//     const allUnKnownMsg = await Conversation.findAll({
+//       where: { user2_id: userId },
+//       include: [
+//         {
+//           model: Message,
+//           attributes: ["message"],
+//           include: [{ model: User, attributes: ["phone"] }],
+//         },
+//       ],
+//     });
+//     res.status(200).send({ allUnKnownMsg });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({ message: "Internal server error" });
+//   }
+// };
+
+const unknownMsg = async (req: Request, res: Response) => {
+  const userId = Number(req.params.userId);
+  const conversationId = Number(req.params.conversationId);
+  try {
+    const unknownMsg = await Message.findAll({
+      where: { conversationId, senderId: userId },
+    });
+    res.status(200).send({ unknownMsg });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+export {
+  postMessage,
+  getOneToOneMsg,
+  getGroupMsg,
+  postGroupMsg,
+  MsgFromUnknown,
+  unknownMsg,
+};

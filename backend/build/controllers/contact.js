@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteContact = exports.createNewContact = exports.getAddContactPage = void 0;
+exports.getAddToContactPage = exports.deleteContact = exports.createNewContact = exports.getAddContactPage = void 0;
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const index_1 = require("../models/index");
@@ -117,3 +117,8 @@ const deleteContact = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteContact = deleteContact;
+const getAddToContactPage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filePath = path_1.default.join(__dirname, path_2.absolutePath, "html", "addToContact.html");
+    res.status(200).sendFile(path_1.default.join(filePath));
+});
+exports.getAddToContactPage = getAddToContactPage;

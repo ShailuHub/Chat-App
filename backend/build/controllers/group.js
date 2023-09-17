@@ -8,9 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGroup = exports.postMember = exports.postGroup = void 0;
+exports.removeAdmin = exports.makeAdmin = exports.getGroupChatPage = exports.getGroupMember = exports.getGroup = exports.postMember = exports.postGroup = void 0;
 const index_1 = require("../models/index");
+const path_1 = __importDefault(require("path"));
+const path_2 = require("../utils/path");
 // Create a new group or return an error if it already exists
 const postGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -45,13 +50,11 @@ const postMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId;
     const { groupIdArray } = req.body;
     const groupName = req.body.groupName.toLowerCase();
-    console.log(groupName);
     try {
         // Find the group associated with the adminId
         const isGroup = yield index_1.GroupChat.findOne({
             where: { adminId: userId, groupName },
         });
-        console.log(isGroup);
         if (!isGroup) {
             res.status(404).send({ message: "Group not found" });
             return;
@@ -70,6 +73,7 @@ const postMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         yield index_1.Member.create({
             groupId: isGroup.groupId,
             userId,
+            isAdmin: true,
         });
         // Add the group id to the conversation table
         try {
@@ -106,7 +110,59 @@ const getGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).send({ allGroup, message: "Group List sent successfully" });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
     }
 });
 exports.getGroup = getGroup;
+const getGroupMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
+    const groupId = Number(req.params.groupId);
+    try {
+        const allMember = yield index_1.Member.findAll({
+            where: { groupId: groupId },
+            include: [{ model: index_1.User, attributes: ["username", "phone"] }],
+        });
+        res.status(200).send({ allMember, adminId: (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.getGroupMember = getGroupMember;
+const getGroupChatPage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filePath = path_1.default.join(__dirname, path_2.absolutePath, "html", "groupChat.html");
+    res.status(200).sendFile(filePath);
+});
+exports.getGroupChatPage = getGroupChatPage;
+const toggleAdminStatus = (req, res, isAdmin) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
+    const userId = Number(req.params.userId);
+    const admin = (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId;
+    try {
+        const adminMember = yield index_1.Member.findOne({ where: { userId: admin } });
+        if (!adminMember || !adminMember.isAdmin) {
+            return res.status(401).send({ message: "You are not an admin" });
+        }
+        // Find the target member by userId and update their isAdmin status
+        yield index_1.Member.update({ isAdmin }, { where: { userId } });
+        const message = isAdmin
+            ? "This contact is admin now"
+            : "This contact is no longer an admin";
+        // Send a success response
+        res.status(200).send({ message });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+const makeAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    toggleAdminStatus(req, res, true);
+});
+exports.makeAdmin = makeAdmin;
+const removeAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    toggleAdminStatus(req, res, false);
+});
+exports.removeAdmin = removeAdmin;

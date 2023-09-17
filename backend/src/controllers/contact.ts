@@ -107,4 +107,19 @@ const deleteContact = async (req: Request, res: Response) => {
   }
 };
 
-export { getAddContactPage, createNewContact, deleteContact };
+const getAddToContactPage = async (req: Request, res: Response) => {
+  const filePath: string = path.join(
+    __dirname,
+    absolutePath,
+    "html",
+    "addToContact.html"
+  );
+  res.status(200).sendFile(path.join(filePath));
+};
+
+export {
+  getAddContactPage,
+  createNewContact,
+  deleteContact,
+  getAddToContactPage,
+};

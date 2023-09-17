@@ -22,6 +22,8 @@ a {
   top: 0;
   left: 0;
   background-color: #0e1630;
+  width: 100%;
+  z-index: 1;
 }
 
 .custom-header div {
@@ -29,7 +31,7 @@ a {
 }
 
 .custom-container {
-  width: 450px;
+  max-width: 450px;
   height: 400px;
   display: flex;
   justify-content: center;
@@ -42,6 +44,12 @@ a {
 }
 #form {
   width: 80%;
+}
+
+@media screen and (max-width: 448px) {
+  #form {
+    width: 100%;
+  }
 }
 
 #form input {

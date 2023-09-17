@@ -10,8 +10,8 @@
       crossorigin="anonymous"
     />
     <!-- External CSS stylesheets -->
-    <link rel="stylesheet" href="../css/chat.css" />
     <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/chat.css" />
     <title>Chat App</title>
   </head>
   <body>
@@ -25,7 +25,7 @@
           <button class="btn btn-light mx-2" id="cancel-delete-chat">
             Cancel
           </button>
-          <button class="btn btn-success" id="delete-chat">Delete</button>
+          <button class="btn btn-success" id="delete-chat">Delete chat</button>
         </div>
       </div>
       <div id="overlay"></div>
@@ -87,25 +87,12 @@
           </form>
           <div id="chat-list-container">
             <hr class="text-success" />
-            <h4
-              class="text-success mb-4"
-              id="chat-heading"
-              style="display: block"
-            >
-              C<span class="text-light">hats</span>
-            </h4>
-            <h4
-              class="text-success mb-4"
-              id="member-heading"
-              style="display: none"
-            >
+            <h4 class="text-success mb-4" id="member-heading">
               Me<span class="text-light">mbers</span>
             </h4>
             <hr class="text-success" />
-            <div id="all-users" style="display: block">
-              <!-- All user chat list goes here -->
-            </div>
-            <div id="all-group-users" style="display: none">
+
+            <div id="all-group-users">
               <!-- All user chat list goes here -->
             </div>
           </div>
@@ -165,6 +152,6 @@
     <!-- External JavaScript libraries and scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../script/common.js"></script>
-    <script src="../script/chat.js"></script>
+    <script src="../script/groupChat.js"></script>
   </body>
 </html>

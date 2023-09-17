@@ -47,6 +47,7 @@ user_1.User.hasMany(MessageModel, {
     foreignKey: "senderId",
     onDelete: "CASCADE",
 });
+MessageModel.belongsTo(user_1.User, { foreignKey: "senderId", onDelete: "CASCADE" });
 conversation_1.Conversation.hasMany(MessageModel, {
     foreignKey: "conversationId",
     onDelete: "CASCADE",

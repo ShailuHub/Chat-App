@@ -10,4 +10,8 @@ const group_1 = require("../controllers/group");
 router.post("/user/create/group/:groupName", authenticate_1.default, group_1.postGroup);
 router.post("/user/create/group", authenticate_1.default, group_1.postMember);
 router.get("/user/get/group", authenticate_1.default, group_1.getGroup);
+router.get("/user/get/group/:groupId", authenticate_1.default, group_1.getGroupMember);
+router.get("/user/group", group_1.getGroupChatPage);
+router.patch("/user/make/admin/:userId", authenticate_1.default, group_1.makeAdmin);
+router.patch("/user/remove/admin/:userId", authenticate_1.default, group_1.removeAdmin);
 exports.default = router;

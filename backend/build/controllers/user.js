@@ -157,9 +157,7 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     if (userId) {
         try {
             const allUsers = yield models_1.Contact.findAll({ where: { userId: userId } });
-            res
-                .status(200)
-                .send({
+            res.status(200).send({
                 message: "Users posted",
                 allUsers,
                 ownerName: (_b = req.user) === null || _b === void 0 ? void 0 : _b.username,
