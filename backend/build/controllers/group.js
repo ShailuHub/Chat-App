@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeAdmin = exports.makeAdmin = exports.getGroupChatPage = exports.getGroupMember = exports.getGroup = exports.postMember = exports.postGroup = void 0;
+exports.deleteGroup = exports.removeAdmin = exports.makeAdmin = exports.getGroupChatPage = exports.getGroupMember = exports.getGroup = exports.postMember = exports.postGroup = void 0;
 const index_1 = require("../models/index");
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
@@ -121,7 +121,7 @@ const getGroupMember = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const allMember = yield index_1.Member.findAll({
             where: { groupId: groupId },
-            include: [{ model: index_1.User, attributes: ["username", "phone"] }],
+            include: [{ model: index_1.User, attributes: ["username", "phone", "isActive"] }],
         });
         res.status(200).send({ allMember, adminId: (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId });
     }
@@ -166,3 +166,5 @@ const removeAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     toggleAdminStatus(req, res, false);
 });
 exports.removeAdmin = removeAdmin;
+const deleteGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
+exports.deleteGroup = deleteGroup;

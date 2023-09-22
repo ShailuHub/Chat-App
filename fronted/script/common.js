@@ -1,5 +1,20 @@
+// Import necessary modules and components
+import { allUsers, messageBox, activeUser, messageForm } from "./chat.js";
+import { allMembers } from "./groupChat.js";
+import { userDetails } from "./chat.js";
+
+// Create a Socket.IO connection
+let socket = io("/", {
+  auth: {
+    ownerId: localStorage.getItem("ownerId"),
+  },
+});
+
+// API Base URL
+let baseURL = "http://localhost:3000";
+
 // Function to display a message in the message box
-function displayMessage(username, message, user) {
+export function displayMessage(username, message, user) {
   const div = document.createElement("div");
   div.classList.add("container");
   const p = document.createElement("p");
@@ -12,77 +27,187 @@ function displayMessage(username, message, user) {
   messageBox.appendChild(div);
 }
 
+// Function to handle form submission
+export async function postMessage(event) {
+  event.preventDefault();
+  const details = { message: message.value };
+  const token = localStorage.getItem("token");
+  let user2_id = 0;
+  if (Object.keys(userDetails).length > 0) {
+    user2_id = Number(userDetails.user2_id);
+  } else {
+    const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+    user2_id = Number(userDetails.user2_id);
+  }
+  try {
+    if (user2_id > 0) {
+      const response = await axios.post(
+        `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
+        details,
+        { headers: { Authorization: token } }
+      );
+      if (response.status === 200) {
+        socket.emit("oneToOneMsg", response.data);
+        // Display the user's message
+        displayMessage("You", details.message, "user");
+        scrollBarDown();
+        messageForm.reset();
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Function to retrieve and display one-to-one messages
+export async function getoneToMessage(user2_id) {
+  const token = localStorage.getItem("token");
+
+  try {
+    // Send a request to retrieve messages (you can still use the axios request for initial load)
+    const response = await axios.get(
+      `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
+      {
+        headers: { Authorization: token },
+      }
+    );
+    messageBox.innerHTML = "";
+
+    //Display existing one-to-one messages (as you were doing before)
+    response.data.oneToOneMsg.forEach((msg) => {
+      const senderName =
+        msg.senderId === response.data.user1_id
+          ? "You"
+          : response.data.username;
+      displayMessage(
+        senderName,
+        msg.message,
+        msg.senderId === response.data.user1_id ? "user" : "otheruser"
+      );
+    });
+
+    scrollBarDown();
+
+    // Listen for new messages in real-time using Socket.IO
+    socket.on("oneToOneMsg", (data) => {
+      const senderName =
+        data.messages.senderId === data.user1_id ? "You" : data.username;
+      displayMessage(
+        senderName,
+        data.messages.message,
+        data.messages.senderId === data.user1_id ? "user" : "otheruser"
+      );
+
+      scrollBarDown();
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 // Function to display a user in the user list
-function displayUsers(username, userId, phone, isAdmin, adminId, type) {
+export function displayUsers(
+  username,
+  userId,
+  phone,
+  isAdmin,
+  adminId,
+  type,
+  isActive
+) {
   const div = document.createElement("div");
   div.style.cursor = "pointer";
   div.innerHTML = `
-      <div class="chat-row d-flex gap-3">
-        <div class="row-img">
-          <img src="../images/avatar.png" alt="avatar.png" style="width: 60px; height: 60px" />
-        </div>
-        <div class="d-flex flex-column text-light" style="width:50%">
-          <p>${username}</p>
-          <div class="d-flex justify-content-between">
-            <p style="font-size: small;"><span>+91</span>-${phone}</p>
-            ${
-              type === "members"
-                ? `<p class="mr-5" >${
-                    isAdmin === false
-                      ? ``
-                      : `<span class="text-success">admin</span>`
-                  }</p>`
-                : ``
-            }
-          </div>
-        </div>
-        ${
-          adminId === userId
-            ? ``
-            : `<div class="dropdown" style="display:none">
-        <button class="dropdown-btn">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </button>
-        <div class="dropdown-content">
-          ${
-            type === "users"
-              ? `<a href="#" id="delete-contact">Delete Contact</a>`
-              : `<a href="#" id="remove-contact">Remove Contact</a>`
-          }
-          ${
-            type === "users"
-              ? ``
-              : `<a href="/user/group" id="make-admin">Make Admin</a>`
-          }
-          ${
-            type === "users"
-              ? ``
-              : `<a href="#" id="remove-admin">Remove Admin</a>`
-          }
-        </div>
-      </div>`
-        }
-      </div>
-      <hr class="text-success" />
+  <div class="chat-row d-flex gap-3">
+  <div class="row-img">
+    <img src="../images/avatar.png" alt="avatar.png" style="width: 60px; height: 60px" />
+  </div>
+  <div class="d-flex flex-column text-light" style="width:50%">
+    <div class="d-flex text-light gap-4">
+      <p>${username}</p>
+      ${
+        type === "users"
+          ? `
+            <div id="status-${userId}">
+              ${
+                isActive === true
+                  ? `<p class="text-primary">online</p>`
+                  : `<p class="text-danger">offline</p>`
+              }
+            </div>`
+          : ""
+      }
+      
+    </div>
+    <div class="d-flex justify-content-between">
+      <p style="font-size: small;"><span>+91</span>-${phone}</p>
+      ${
+        type === "members"
+          ? `<p class="mr-5" >${
+              isAdmin === false ? `` : `<span class="text-success">admin</span>`
+            }</p>`
+          : ``
+      }
+    </div>
+  </div>
+  ${
+    adminId === userId
+      ? ``
+      : `<div class="dropdown" style="display:none">
+    <button class="dropdown-btn">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </button>
+    <div class="dropdown-content">
+      ${
+        type === "users"
+          ? `<a href="#" id="delete-contact">Delete Contact</a>`
+          : `<a href="#" id="remove-contact">Remove</a>`
+      }
+      
+      ${
+        type === "users"
+          ? ``
+          : `<a href="/user/group" id="make-admin">Make Admin</a>`
+      }
+      ${
+        type === "users" ? `` : `<a href="#" id="remove-admin">Remove Admin</a>`
+      }
+    </div>
+  </div>`
+  }
+</div>
+<hr class="text-success" />
+
     `;
   if (type === "members") {
     div.dataset.userId = userId;
     div.dataset.username = username;
     div.dataset.phone = phone;
-    allMembers.appendChild(div);
+    div.dataset.isAdmin = isAdmin;
+    if (allMembers) {
+      allMembers.appendChild(div);
+    }
   }
   if (type === "users") {
     div.dataset.userId = userId;
     div.dataset.username = username;
     div.dataset.phone = phone;
-    allUsers.appendChild(div);
+    if (allUsers) {
+      allUsers.appendChild(div);
+    }
   }
 }
 
 // Function to display an unknown user
-function displayUnKnownUser(phone, msg, senderId, conversationId, userId) {
+export function displayUnKnownUser(
+  phone,
+  msg,
+  senderId,
+  conversationId,
+  userId
+) {
   const div = document.createElement("div");
   div.style.cursor = "pointer";
   div.innerHTML = `
@@ -113,176 +238,186 @@ function displayUnKnownUser(phone, msg, senderId, conversationId, userId) {
   div.dataset.userId = userId;
   div.dataset.phone = phone;
   div.dataset.conversationId = conversationId;
-  allUsers.appendChild(div);
+  if (allUsers) {
+    allUsers.appendChild(div);
+  }
 }
 
 // Function to scroll the message box to the bottom
-function scrollBarDown() {
+export function scrollBarDown() {
   messageBox.scrollTop = messageBox.scrollHeight;
 }
 
 // Function to display the owner's name
-function getOwnerName(userName) {
+export function getOwnerName(userName) {
   const ownerName = document.getElementById("owner-name");
-  ownerName.textContent = userName;
+  if (ownerName) {
+    ownerName.textContent = userName;
+  }
 }
 
 // Function to handle events on user selection and dropdowns
-function eventTakePlaceOn(evetnOn) {
+export function eventTakePlaceOn(evetnOn) {
   // Event listener to show dropdown on mouseover
-  evetnOn.addEventListener("mouseover", (event) => {
-    const dropdown = event.target.closest(".chat-row");
-    if (dropdown) {
-      const dropdownDiv = dropdown.querySelector(".dropdown");
-      dropdownDiv.style.display = "block";
-    }
-  });
-
-  // Event listener to hide dropdown on mouseout
-  evetnOn.addEventListener("mouseout", (event) => {
-    const dropdown = event.target.closest(".chat-row");
-    if (dropdown) {
-      const dropdownDiv = dropdown.querySelector(".dropdown");
-      dropdownDiv.style.display = "none";
-    }
-  });
-
-  // Event listener for clicks on .dropdown-content using event delegation
-  evetnOn.addEventListener("click", async (event) => {
-    event.preventDefault();
-    const toDeleteDiv = event.target.closest(".chat-row");
-    const clickedAnchor = event.target.closest(".dropdown-content a");
-    const deleteContainer = document.getElementById("delete-main-container");
-    // Event listeners for cancel and delete actions
-    const cancel = document.getElementById("cancel-delete-chat");
-    const deleteChat = document.getElementById("delete-chat");
-
-    if (clickedAnchor && clickedAnchor.id === "delete-contact") {
-      deleteContainer.style.display = "block";
-
-      if (cancel) {
-        cancel.addEventListener("click", () => {
-          window.location.href = "/user/chat";
-        });
+  if (evetnOn) {
+    evetnOn.addEventListener("mouseover", (event) => {
+      const dropdown = event.target.closest(".chat-row");
+      if (dropdown) {
+        const dropdownDiv = dropdown.querySelector(".dropdown");
+        if (dropdownDiv) {
+          dropdownDiv.style.display = "block";
+        }
       }
+    });
 
-      if (deleteChat && toDeleteDiv) {
-        deleteChat.addEventListener("click", async (event) => {
-          event.preventDefault();
-          const userId = toDeleteDiv.parentElement.dataset.userId;
-          const phone = toDeleteDiv.parentElement.dataset.phone;
-          if (userId && phone) {
-            const token = localStorage.getItem("token");
-            try {
-              const response = await axios.delete(
-                `${baseURL}/user/delete/contact/${phone}/${userId}`,
-                {
-                  headers: { Authorization: token },
+    // Event listener to hide dropdown on mouseout
+    evetnOn.addEventListener("mouseout", (event) => {
+      const dropdown = event.target.closest(".chat-row");
+      if (dropdown) {
+        const dropdownDiv = dropdown.querySelector(".dropdown");
+        if (dropdownDiv) {
+          dropdownDiv.style.display = "none";
+        }
+      }
+    });
+
+    // Event listener for clicks on .dropdown-content using event delegation
+    evetnOn.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const toDeleteDiv = event.target.closest(".chat-row");
+      const clickedAnchor = event.target.closest(".dropdown-content a");
+      const deleteContainer = document.getElementById("delete-main-container");
+      // Event listeners for cancel and delete actions
+      const cancel = document.getElementById("cancel-delete-chat");
+      const deleteChat = document.getElementById("delete-chat");
+
+      if (clickedAnchor && clickedAnchor.id === "delete-contact") {
+        deleteContainer.style.display = "block";
+
+        if (cancel) {
+          cancel.addEventListener("click", () => {
+            window.location.href = "/user/chat";
+          });
+        }
+
+        if (deleteChat && toDeleteDiv) {
+          deleteChat.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const userId = toDeleteDiv.parentElement.dataset.userId;
+            const phone = toDeleteDiv.parentElement.dataset.phone;
+            if (userId && phone) {
+              const token = localStorage.getItem("token");
+              try {
+                const response = await axios.delete(
+                  `${baseURL}/user/delete/contact/${phone}/${userId}`,
+                  {
+                    headers: { Authorization: token },
+                  }
+                );
+                if (response.status === 200) {
+                  window.location.href = "/user/chat";
+                } else {
+                  console.log("Something went wrong");
                 }
-              );
-              if (response.status === 200) {
-                window.location.href = "/user/chat";
-              } else {
-                console.log("Something went wrong");
+              } catch (error) {
+                console.log(error);
               }
-            } catch (error) {
-              console.log(error);
             }
-          }
-        });
+          });
+        }
       }
-    }
 
-    if (clickedAnchor && clickedAnchor.id === "make-admin") {
-      const userId = Number(toDeleteDiv.parentElement.dataset.userId);
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.patch(
-          `${baseURL}/user/make/admin/${userId}`,
-          {},
-          {
-            headers: { Authorization: token },
+      if (clickedAnchor && clickedAnchor.id === "make-admin") {
+        const userId = Number(toDeleteDiv.parentElement.dataset.userId);
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.patch(
+            `${baseURL}/user/make/admin/${userId}`,
+            {},
+            {
+              headers: { Authorization: token },
+            }
+          );
+          if (response.status === 200) {
+            window.location.href = "/user/group";
+          } else {
+            console.log("Something went wrong");
           }
-        );
-        if (response.status === 200) {
-          window.location.href = "/user/group";
-        } else {
-          console.log("Something went wrong");
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.response && error.response.status === 401) {
-          alert("You are not an admin");
-        }
-      }
-    }
-
-    if (clickedAnchor && clickedAnchor.id === "remove-admin") {
-      const userId = Number(toDeleteDiv.parentElement.dataset.userId);
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.patch(
-          `${baseURL}/user/remove/admin/${userId}`,
-          {},
-          {
-            headers: { Authorization: token },
+        } catch (error) {
+          console.log(error);
+          if (error.response && error.response.status === 401) {
+            alert("You are not an admin");
           }
-        );
-        if (response.status === 200) {
-          window.location.href = "/user/group";
-        } else {
-          console.log("Something went wrong");
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.response && error.response.status === 401) {
-          alert("You are not an admin");
         }
       }
-    }
 
-    if (clickedAnchor && clickedAnchor.id === "remove-contact") {
-      const userId = Number(toDeleteDiv.parentElement.dataset.userId);
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `${baseURL}/user/remove/contact/${userId}`,
-          {
-            headers: { Authorization: token },
+      if (clickedAnchor && clickedAnchor.id === "remove-admin") {
+        const userId = Number(toDeleteDiv.parentElement.dataset.userId);
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.patch(
+            `${baseURL}/user/remove/admin/${userId}`,
+            {},
+            {
+              headers: { Authorization: token },
+            }
+          );
+          if (response.status === 200) {
+            window.location.href = "/user/group";
+          } else {
+            console.log("Something went wrong");
           }
-        );
-        if (response.status === 200) {
-          window.location.href = "/user/group";
-        } else {
-          console.log("Something went wrong");
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.response && error.response.status === 401) {
-          alert("You are not an admin");
+        } catch (error) {
+          console.log(error);
+          if (error.response && error.response.status === 401) {
+            alert("You are not an admin");
+          }
         }
       }
-    }
 
-    if (clickedAnchor && clickedAnchor.id === "add-to-contact") {
-      const phone = toDeleteDiv.parentElement.dataset.phone;
-      localStorage.setItem("addToContact", phone);
-      try {
-        const response = await axios.get(`${baseURL}/user/toContact`);
-        if (response.status === 200) {
-          window.location.href = "/user/toContact";
-        } else {
-          window.location.href = "/user/chat";
+      if (clickedAnchor && clickedAnchor.id === "remove-contact") {
+        const userId = Number(toDeleteDiv.parentElement.dataset.userId);
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get(
+            `${baseURL}/user/remove/contact/${userId}`,
+            {
+              headers: { Authorization: token },
+            }
+          );
+          if (response.status === 200) {
+            window.location.href = "/user/group";
+          } else {
+            console.log("Something went wrong");
+          }
+        } catch (error) {
+          console.log(error);
+          if (error.response && error.response.status === 401) {
+            alert("You are not an admin");
+          }
         }
-      } catch (error) {
-        console.log(error);
       }
-    }
-  });
+
+      if (clickedAnchor && clickedAnchor.id === "add-to-contact") {
+        const phone = toDeleteDiv.parentElement.dataset.phone;
+        localStorage.setItem("addToContact", phone);
+        try {
+          const response = await axios.get(`${baseURL}/user/toContact`);
+          if (response.status === 200) {
+            window.location.href = "/user/toContact";
+          } else {
+            window.location.href = "/user/chat";
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+  }
 }
 
 // Display the active user name in the right container message box
-function onLineUser(username) {
+export function onLineUser(username) {
   const div = document.createElement("div");
   div.innerHTML = `
     <div class="chat-row d-flex">
@@ -298,3 +433,53 @@ function onLineUser(username) {
   activeUser.innerHTML = "";
   activeUser.appendChild(div);
 }
+
+if (window.location.pathname === "/user/chat") {
+  // Attach ownerId to the socket when connecting
+  socket.on("connect", () => {
+    console.log("Connected to socket.io");
+  });
+
+  // Send the ownerId when the user disconnects
+  socket.on("disconnect", () => {
+    console.log("Socket.io disconnected");
+  });
+
+  // Handle incoming one-to-one messages
+  socket.on("msgFor", (data) => {
+    const ownerId = localStorage.getItem("ownerId");
+
+    let user2_id = 0;
+    if (Object.keys(userDetails).length > 0) {
+      user2_id = userDetails.user2_id;
+    } else {
+      const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+      user2_id = userDetails.user2_id;
+    }
+
+    if (data.recieverId == ownerId && data.senderId == user2_id) {
+      displayMessage(data.sendername, data.message, "otheruser");
+      scrollBarDown();
+    }
+  });
+
+  // Handle user connect events
+  socket.on("userConnect", (data) => {
+    const { userId, active } = data;
+    const statusElement = document.querySelector(`#status-${userId}`);
+    if (statusElement) {
+      statusElement.innerHTML = `<p class="text-primary">online</p>`;
+    }
+  });
+
+  // Handle user disconnect events
+  socket.on("userDisconnect", (data) => {
+    const { userId, active } = data;
+    const statusElement = document.querySelector(`#status-${userId}`);
+    if (statusElement) {
+      statusElement.innerHTML = `<p class="text-danger">offline</p>`;
+    }
+  });
+}
+
+export { baseURL, socket };

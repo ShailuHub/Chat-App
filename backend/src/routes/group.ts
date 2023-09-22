@@ -9,6 +9,7 @@ import {
   getGroupChatPage,
   makeAdmin,
   removeAdmin,
+  deleteGroup,
 } from "../controllers/group";
 
 router.post("/user/create/group/:groupName", authenticate, postGroup);
@@ -18,5 +19,6 @@ router.get("/user/get/group/:groupId", authenticate, getGroupMember);
 router.get("/user/group", getGroupChatPage);
 router.patch("/user/make/admin/:userId", authenticate, makeAdmin);
 router.patch("/user/remove/admin/:userId", authenticate, removeAdmin);
+router.get("/user/get/group", authenticate, deleteGroup);
 
 export default router;

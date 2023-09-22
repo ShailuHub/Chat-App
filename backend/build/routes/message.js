@@ -20,5 +20,6 @@ router.get("/user/chat/group/msg/:groupId", authenticate_1.default, message_1.ge
 router.post("/user/chat/group/msg/:groupId", authenticate_1.default, message_1.postGroupMsg);
 // Route to recieve any message from unknown number
 router.get("/user/chat/msg/unknown", authenticate_1.default, message_1.MsgFromUnknown);
+router.get("/user/privateChat", message_1.getPrivateChat);
 router.get("/user/chat/usknownMsg/msg/:userId/:conversationId", authenticate_1.default, message_1.unknownMsg);
 exports.default = router;

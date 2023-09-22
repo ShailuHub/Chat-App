@@ -36,6 +36,8 @@ const postSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let { username, email, password, confirm_password, phone } = req.body;
     // Trim and convert email and username to lowercase for consistency
     username = username.trim();
+    let usernameArray = username.split(" ");
+    username = usernameArray[0];
     email = email.trim().toLowerCase();
     phone = phone.trim();
     if (!isValidPhoneNumber(phone))
@@ -124,9 +126,12 @@ const postLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     phone: user.phone,
                 }, secret, { expiresIn: "1hr" });
                 // Send a success response with the JWT
-                res
-                    .status(200)
-                    .json({ success: "success", message: "Logged in", token: token });
+                res.status(200).json({
+                    success: "success",
+                    message: "Logged in",
+                    token: token,
+                    ownerId: user.userId,
+                });
             }
             else {
                 // Unauthorized user (incorrect password)
@@ -156,7 +161,10 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     if (userId) {
         try {
-            const allUsers = yield models_1.Contact.findAll({ where: { userId: userId } });
+            const allUsers = yield models_1.Contact.findAll({
+                where: { userId: userId },
+                include: [{ model: user_1.User, attributes: ["isActive"] }],
+            });
             res.status(200).send({
                 message: "Users posted",
                 allUsers,

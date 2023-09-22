@@ -34,4 +34,8 @@ UserModel.init({
         allowNull: false,
         unique: true,
     },
+    isActive: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
 }, { sequelize: database_1.default, modelName: "User" });

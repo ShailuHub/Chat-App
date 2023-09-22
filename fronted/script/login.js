@@ -34,9 +34,12 @@ async function postLoginDetails(event) {
 
     // Store the token in localStorage
     localStorage.setItem("token", response.data.token);
+    localStorage.setItem("ownerId", response.data.ownerId);
 
     if (response.status === 200) {
       // Redirect to chat page on successful login
+      localStorage.removeItem("userDetails");
+      localStorage.removeItem("groupDetails");
       window.location.href = "/user/chat";
     } else {
       // Redirect to login page on unsuccessful login

@@ -5,10 +5,18 @@ import {
   createNewContact,
   deleteContact,
   getAddToContactPage,
+  getSearchOrAdd,
+  getGroupExcludedList,
 } from "../controllers/contact";
 const router = Router();
 
 router.get("/user/addUser", getAddContactPage);
+router.get("/user/searchOrAdd", getSearchOrAdd);
+router.get(
+  "/user/remaining/chat/list/:groupId",
+  authenticate,
+  getGroupExcludedList
+);
 router.get("/user/toContact", getAddToContactPage);
 router.post("/user/createContact", authenticate, createNewContact);
 router.delete(

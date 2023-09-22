@@ -9,6 +9,7 @@ import {
   postGroupMsg,
   MsgFromUnknown,
   unknownMsg,
+  getPrivateChat,
 } from "../controllers/message";
 
 // Import your authentication middleware
@@ -29,6 +30,7 @@ router.post("/user/chat/group/msg/:groupId", authenticate, postGroupMsg);
 
 // Route to recieve any message from unknown number
 router.get("/user/chat/msg/unknown", authenticate, MsgFromUnknown);
+router.get("/user/privateChat", getPrivateChat);
 
 router.get(
   "/user/chat/usknownMsg/msg/:userId/:conversationId",

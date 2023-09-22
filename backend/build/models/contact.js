@@ -35,3 +35,4 @@ ContactModel.init({
     },
 }, { sequelize: database_1.default, modelName: "Contact" });
 user_1.User.hasMany(ContactModel, { foreignKey: "userId", onDelete: "CASCADE" });
+ContactModel.belongsTo(user_1.User, { foreignKey: "addedId", onDelete: "CASCADE" });

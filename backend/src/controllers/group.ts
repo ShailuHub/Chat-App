@@ -108,7 +108,7 @@ const getGroupMember = async (req: Request, res: Response) => {
   try {
     const allMember = await Member.findAll({
       where: { groupId: groupId },
-      include: [{ model: User, attributes: ["username", "phone"] }],
+      include: [{ model: User, attributes: ["username", "phone", "isActive"] }],
     });
     res.status(200).send({ allMember, adminId: req.user?.userId });
   } catch (error) {
@@ -165,6 +165,8 @@ const removeAdmin = async (req: Request, res: Response) => {
   toggleAdminStatus(req, res, false);
 };
 
+const deleteGroup = async (req: Request, res: Response) => {};
+
 export {
   postGroup,
   postMember,
@@ -173,4 +175,5 @@ export {
   getGroupChatPage,
   makeAdmin,
   removeAdmin,
+  deleteGroup,
 };

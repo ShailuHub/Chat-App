@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
+exports.getPrivateChat = exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
 const index_1 = require("../models/index");
 const sequelize_1 = __importDefault(require("sequelize"));
-// Handle POST request to create a new message
+const path_1 = __importDefault(require("path"));
+const path_2 = require("../utils/path");
 const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
     // Get the user ID and message from the request body
+    var _a, _b, _c;
     const user1_id = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     const user2_id = Number(req.params.user2_id);
     const { message } = req.body;
@@ -41,7 +42,7 @@ const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
             // Create a new message in the database
             if (isConversationExists) {
-                yield index_1.Message.create({
+                const newMessage = yield index_1.Message.create({
                     sendername: (_b = req.user) === null || _b === void 0 ? void 0 : _b.username,
                     message,
                     senderId: user1_id,
@@ -49,8 +50,10 @@ const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 });
                 // Send a success response
                 res.status(200).send({
-                    message: "Message created and posted successfully",
+                    message,
                     sendername: (_c = req.user) === null || _c === void 0 ? void 0 : _c.username,
+                    recieverId: user2_id,
+                    senderId: user1_id,
                 });
             }
             else {
@@ -190,8 +193,9 @@ const postGroupMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 senderId: userId,
             });
             res.status(200).send({
-                message: "Message created and posted successfully",
+                message,
                 sendername: (_h = req.user) === null || _h === void 0 ? void 0 : _h.username,
+                groupId,
             });
         }
     }
@@ -270,3 +274,8 @@ const unknownMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.unknownMsg = unknownMsg;
+const getPrivateChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filePath = path_1.default.join(__dirname, path_2.absolutePath, "html", "privateChat.html");
+    res.status(200).sendFile(filePath);
+});
+exports.getPrivateChat = getPrivateChat;

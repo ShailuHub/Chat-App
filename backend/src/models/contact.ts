@@ -41,5 +41,6 @@ ContactModel.init(
 );
 
 User.hasMany(ContactModel, { foreignKey: "userId", onDelete: "CASCADE" });
+ContactModel.belongsTo(User, { foreignKey: "addedId", onDelete: "CASCADE" });
 
 export { ContactModel as Contact };

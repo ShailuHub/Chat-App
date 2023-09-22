@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAddToContactPage = exports.deleteContact = exports.createNewContact = exports.getAddContactPage = void 0;
+exports.getGroupExcludedList = exports.getSearchOrAdd = exports.getAddToContactPage = exports.deleteContact = exports.createNewContact = exports.getAddContactPage = void 0;
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const index_1 = require("../models/index");
@@ -122,3 +122,40 @@ const getAddToContactPage = (req, res) => __awaiter(void 0, void 0, void 0, func
     res.status(200).sendFile(path_1.default.join(filePath));
 });
 exports.getAddToContactPage = getAddToContactPage;
+const getSearchOrAdd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filePath = path_1.default.join(__dirname, path_2.absolutePath, "html", "searchAndAddContact.html");
+    res.status(200).sendFile(path_1.default.join(filePath));
+});
+exports.getSearchOrAdd = getSearchOrAdd;
+const getGroupExcludedList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
+    const groupId = Number(req.params.groupId);
+    const userId = (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId;
+    try {
+        const contacts = [];
+        // Find user contacts and sort by addedId
+        const userContacts = yield index_1.Contact.findAll({
+            where: { userId: userId },
+        });
+        // Find group member contacts and sort by userId
+        const groupMemberContacts = yield index_1.Member.findAll({
+            attributes: ["userId"],
+            where: { groupId: groupId },
+        });
+        let i = 0;
+        while (i < userContacts.length) {
+            const tar = userContacts[i];
+            const idx = groupMemberContacts.findIndex((member) => member.userId === tar.addedId);
+            if (idx === -1) {
+                contacts.push(tar);
+            }
+            i++;
+        }
+        res.status(200).send({ contacts, userContacts, groupMemberContacts });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.getGroupExcludedList = getGroupExcludedList;

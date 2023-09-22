@@ -7,6 +7,7 @@ class UserModel extends Model {
   public email!: string;
   public password!: string;
   public phone!: string;
+  public isActive!: boolean;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
@@ -36,6 +37,10 @@ UserModel.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   { sequelize, modelName: "User" }

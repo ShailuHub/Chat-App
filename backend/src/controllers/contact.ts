@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import path from "path";
 import { absolutePath } from "../utils/path";
-import { User, Contact, Conversation } from "../models/index";
+import { User, Contact, Conversation, Member } from "../models/index";
 import Sequelize from "sequelize";
 
 // Function to get the Add Contact page
@@ -117,9 +117,54 @@ const getAddToContactPage = async (req: Request, res: Response) => {
   res.status(200).sendFile(path.join(filePath));
 };
 
+const getSearchOrAdd = async (req: Request, res: Response) => {
+  const filePath: string = path.join(
+    __dirname,
+    absolutePath,
+    "html",
+    "searchAndAddContact.html"
+  );
+  res.status(200).sendFile(path.join(filePath));
+};
+
+const getGroupExcludedList = async (req: Request, res: Response) => {
+  const groupId = Number(req.params.groupId);
+  const userId = req.user?.userId;
+  try {
+    const contacts: any = [];
+
+    // Find user contacts and sort by addedId
+    const userContacts = await Contact.findAll({
+      where: { userId: userId },
+    });
+    // Find group member contacts and sort by userId
+    const groupMemberContacts = await Member.findAll({
+      attributes: ["userId"],
+      where: { groupId: groupId },
+    });
+    let i: number = 0;
+    while (i < userContacts.length) {
+      const tar = userContacts[i];
+      const idx = groupMemberContacts.findIndex(
+        (member) => member.userId === tar.addedId
+      );
+      if (idx === -1) {
+        contacts.push(tar);
+      }
+      i++;
+    }
+    res.status(200).send({ contacts, userContacts, groupMemberContacts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
 export {
   getAddContactPage,
   createNewContact,
   deleteContact,
   getAddToContactPage,
+  getSearchOrAdd,
+  getGroupExcludedList,
 };

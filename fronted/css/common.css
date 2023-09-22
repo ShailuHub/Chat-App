@@ -7,3 +7,10 @@
 body {
   background-color: #0e1630;
 }
+
+.custom-btn {
+  background-color: transparent;
+  color: green;
+  margin-right: 1rem;
+  border: none;
+}

@@ -14,4 +14,5 @@ router.get("/user/get/group/:groupId", authenticate_1.default, group_1.getGroupM
 router.get("/user/group", group_1.getGroupChatPage);
 router.patch("/user/make/admin/:userId", authenticate_1.default, group_1.makeAdmin);
 router.patch("/user/remove/admin/:userId", authenticate_1.default, group_1.removeAdmin);
+router.get("/user/get/group", authenticate_1.default, group_1.deleteGroup);
 exports.default = router;

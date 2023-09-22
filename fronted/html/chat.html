@@ -66,9 +66,15 @@
 
         <!-- Search form and chat list -->
         <div id="left-container">
-          <p class="text-white mt-3">
-            Welcome <span class="text-success" id="owner-name">Shailu</span>
-          </p>
+          <div class="d-flex justify-content-between">
+            <p class="text-white mt-3">
+              Welcome
+              <span class="text-success" id="owner-name">Anonymous</span>
+            </p>
+            <button class="custom-btn text-danger" id="log-out-btn">
+              Log out
+            </button>
+          </div>
           <form action="" id="form">
             <div class="input-group mb-3">
               <input
@@ -164,7 +170,12 @@
 
     <!-- External JavaScript libraries and scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="../script/common.js"></script>
-    <script src="../script/chat.js"></script>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module" src="../script/common.js"></script>
+    <script type="module" src="../script/chat.js"></script>
   </body>
 </html>

@@ -23,6 +23,8 @@ const postSignup = async (req: Request, res: Response) => {
   let { username, email, password, confirm_password, phone } = req.body;
   // Trim and convert email and username to lowercase for consistency
   username = username.trim();
+  let usernameArray = username.split(" ");
+  username = usernameArray[0];
   email = email.trim().toLowerCase();
   phone = phone.trim();
   if (!isValidPhoneNumber(phone))
@@ -128,9 +130,12 @@ const postLogin = async (req: Request, res: Response) => {
         );
 
         // Send a success response with the JWT
-        res
-          .status(200)
-          .json({ success: "success", message: "Logged in", token: token });
+        res.status(200).json({
+          success: "success",
+          message: "Logged in",
+          token: token,
+          ownerId: user.userId,
+        });
       } else {
         // Unauthorized user (incorrect password)
         res.status(401).json({ message: "Unauthorized user" });
@@ -161,7 +166,10 @@ const getAllUsers = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   if (userId) {
     try {
-      const allUsers = await Contact.findAll({ where: { userId: userId } });
+      const allUsers = await Contact.findAll({
+        where: { userId: userId },
+        include: [{ model: User, attributes: ["isActive"] }],
+      });
       res.status(200).send({
         message: "Users posted",
         allUsers,

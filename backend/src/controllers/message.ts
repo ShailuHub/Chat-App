@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import sequelize from "../utils/database";
 import { User, Message, Conversation, Contact } from "../models/index";
-import Sequelize, { where } from "sequelize";
+import Sequelize from "sequelize";
+import path from "path";
+import { absolutePath } from "../utils/path";
 
-// Handle POST request to create a new message
 const postMessage = async (req: Request, res: Response) => {
   // Get the user ID and message from the request body
+
   const user1_id = req.user?.userId;
   const user2_id: number = Number(req.params.user2_id);
   const { message } = req.body;
-
   if (user1_id && user2_id) {
     try {
       // Check if a conversation between the two users exists
@@ -30,17 +30,18 @@ const postMessage = async (req: Request, res: Response) => {
 
       // Create a new message in the database
       if (isConversationExists) {
-        await Message.create({
+        const newMessage = await Message.create({
           sendername: req.user?.username,
           message,
           senderId: user1_id,
           conversationId: isConversationExists.conversationId,
         });
-
         // Send a success response
         res.status(200).send({
-          message: "Message created and posted successfully",
+          message,
           sendername: req.user?.username,
+          recieverId: user2_id,
+          senderId: user1_id,
         });
       } else {
         res.status(401).send({ message: "Not connected with each other" });
@@ -180,8 +181,9 @@ const postGroupMsg = async (req: Request, res: Response) => {
       });
 
       res.status(200).send({
-        message: "Message created and posted successfully",
+        message,
         sendername: req.user?.username,
+        groupId,
       });
     }
   } catch (error) {
@@ -262,6 +264,16 @@ const unknownMsg = async (req: Request, res: Response) => {
   }
 };
 
+const getPrivateChat = async (req: Request, res: Response) => {
+  const filePath: string = path.join(
+    __dirname,
+    absolutePath,
+    "html",
+    "privateChat.html"
+  );
+  res.status(200).sendFile(filePath);
+};
+
 export {
   postMessage,
   getOneToOneMsg,
@@ -269,4 +281,5 @@ export {
   postGroupMsg,
   MsgFromUnknown,
   unknownMsg,
+  getPrivateChat,
 };

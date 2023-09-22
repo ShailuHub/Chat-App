@@ -257,13 +257,8 @@ p {
 }
 
 @media screen and (max-width: 992px) and (min-width: 320px) {
-  .left-container {
-    width: 100%;
-    margin: auto;
-  }
   .right-container {
     width: 100%;
-    display: none;
   }
 
   #right-container {
@@ -293,12 +288,3 @@ p {
     height: 20px;
   }
 }
-/* @media screen and (max-width: 375px) {
-  .left-container {
-    width: 100%;
-  }
-
-  .right-container {
-    display: none;
-  }
-} */
