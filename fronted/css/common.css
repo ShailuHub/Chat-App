@@ -8,9 +8,58 @@ body {
   background-color: #0e1630;
 }
 
+h5,
+p {
+  letter-spacing: 1px;
+}
+
 .custom-btn {
   background-color: transparent;
   color: green;
   margin-right: 1rem;
   border: none;
+}
+
+#emojiContainer {
+  top: 15%;
+  position: absolute;
+  z-index: 5;
+}
+
+.message-stack-display div.user {
+  text-align: left;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.message-stack-display div.user p {
+  background-color: #157347;
+  color: #fff;
+  border-radius: 15px 15px 15px 0; /* Apply border-radius to the top-left, top-right, bottom-right, and bottom-left corners */
+  position: relative;
+
+  word-wrap: break-word;
+  max-width: 80%;
+  padding: 5px 15px 5px 15px;
+}
+
+.message-stack-display div:not(.user) {
+  text-align: left;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+.message-stack-display div:not(.user) p {
+  background-color: #303032;
+  color: #fff;
+  border-radius: 15px 0 15px 15px; /* Apply border-radius to the top-left, top-right, bottom-right, and bottom-left corners */
+  position: relative;
+  word-wrap: break-word;
+  max-width: 80%;
+  padding: 5px 15px 5px 15px;
 }

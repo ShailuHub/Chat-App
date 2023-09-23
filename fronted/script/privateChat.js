@@ -1,4 +1,4 @@
-import { getoneToMessage, onLineUser } from "./common.js";
+import { getoneToMessage, onLineUser, postMessage } from "./common.js";
 
 // DOM Elements
 const messageForm = document.getElementById("message-form");
@@ -8,4 +8,6 @@ const user2_id = Number(userDetails.user2_id);
 getoneToMessage(user2_id);
 onLineUser(userDetails.username);
 // Event listener to handle message submission
-messageForm.addEventListener("submit", postMessage);
+if (window.location.pathname === "/user/privateChat") {
+  messageForm.addEventListener("submit", postMessage);
+}

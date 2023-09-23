@@ -35,6 +35,7 @@ async function postLoginDetails(event) {
     // Store the token in localStorage
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("ownerId", response.data.ownerId);
+    localStorage.setItem("ownerName", response.data.ownerName);
 
     if (response.status === 200) {
       // Redirect to chat page on successful login

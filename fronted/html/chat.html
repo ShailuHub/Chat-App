@@ -9,6 +9,10 @@
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/emoji-mart@latest/css/emoji-mart.css"
+    />
     <!-- External CSS stylesheets -->
     <link rel="stylesheet" href="../css/chat.css" />
     <link rel="stylesheet" href="../css/common.css" />
@@ -124,6 +128,7 @@
       <!-- Message sender name and message stack -->
       <div class="container right-container">
         <div id="right-container">
+          <div id="emojiContainer"></div>
           <div class="right-container-user" id="active-user">
             <!-- Active User section -->
           </div>
@@ -140,11 +145,11 @@
             <form action="" id="message-form">
               <div class="input-group mb-3">
                 <span class="input-group-text bg-success p-0"
-                  ><button class="btn btn-success">
+                  ><button type="button" class="btn btn-success" id="emojiBtn">
                     <img src="../images/avatar.png" alt="search.png" /></button
                 ></span>
                 <span class="input-group-text bg-success p-0"
-                  ><button class="btn btn-success">
+                  ><button type="button" class="btn btn-success">
                     <img
                       src="../images/attachment.png"
                       alt="search.png"
@@ -175,6 +180,7 @@
       integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
     <script type="module" src="../script/common.js"></script>
     <script type="module" src="../script/chat.js"></script>
   </body>

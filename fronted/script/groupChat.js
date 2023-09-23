@@ -15,13 +15,13 @@ const allMembers = document.getElementById("all-group-users");
 const addUserBtn = document.getElementById("add-user-btn");
 const showAddMemberBtn = document.getElementById("custom-btn");
 const deleteGroup = document.getElementById("delete-group-btn");
+const showGroupChatMessageBtn = document.getElementById("show-msg-custom-btn");
 
 // Create a Socket.IO connection
 let baseURL = "http://localhost:3000";
 var socket = io();
 
 let groupDetails = JSON.parse(localStorage.getItem("groupDetails"));
-//let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
 // First-time flags
 let firstTimeOneToOneMsg = true;
@@ -157,14 +157,25 @@ if (deleteGroup) {
     const token = localStorage.getItem("token");
     let groupId = Number(groupDetails.groupId);
     try {
-      const response = await axios.get(
+      const response = await axios.delete(
         `${baseURL}/user/delete/group/${groupId}`,
         {
           headers: { Authorization: token },
         }
       );
+      if (response.status === 200) {
+        window.location.href = "/user/group";
+      } else {
+        console.log("Something went wrong");
+      }
     } catch (error) {
       console.log(error);
+      if (error.response && error.response.status === 401) {
+        alert("You are not an admin");
+      }
+      if (error.response && error.response.status === 404) {
+        alert("Member not Found");
+      }
     }
   });
 }
@@ -186,6 +197,12 @@ if (window.location.pathname === "/user/group") {
   eventTakePlaceOn(allMembers);
   // Event listener to handle message submission
   messageForm.addEventListener("submit", postGroupMessage);
+}
+
+if (showAddMemberBtn) {
+  showGroupChatMessageBtn.addEventListener("click", () => {
+    window.location.href = "/group/privateChat";
+  });
 }
 
 export { allMembers };

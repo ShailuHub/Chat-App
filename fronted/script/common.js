@@ -1,7 +1,29 @@
 // Import necessary modules and components
 import { allUsers, messageBox, activeUser, messageForm } from "./chat.js";
 import { allMembers } from "./groupChat.js";
-import { userDetails } from "./chat.js";
+import { userDetails, emojiBtn } from "./chat.js";
+
+const pickerOptions = {
+  onEmojiSelect: handleEmojiSelect,
+};
+const emojiPicker = new EmojiMart.Picker(pickerOptions);
+
+let isPickerVisible = false;
+emojiBtn.addEventListener("click", () => {
+  const emojiContainer = document.getElementById("emojiContainer");
+  if (!isPickerVisible) {
+    emojiContainer.appendChild(emojiPicker);
+    isPickerVisible = true;
+  } else {
+    emojiPicker.remove();
+    isPickerVisible = false;
+  }
+});
+
+function handleEmojiSelect(emoji) {
+  const message = document.getElementById("message");
+  message.value += emoji.native;
+}
 
 // Create a Socket.IO connection
 let socket = io("/", {
@@ -51,6 +73,7 @@ export async function postMessage(event) {
         // Display the user's message
         displayMessage("You", details.message, "user");
         scrollBarDown();
+        emojiPicker.remove();
         messageForm.reset();
       }
     }
@@ -377,9 +400,10 @@ export function eventTakePlaceOn(evetnOn) {
 
       if (clickedAnchor && clickedAnchor.id === "remove-contact") {
         const userId = Number(toDeleteDiv.parentElement.dataset.userId);
+        console.log(userId);
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.get(
+          const response = await axios.delete(
             `${baseURL}/user/remove/contact/${userId}`,
             {
               headers: { Authorization: token },
@@ -394,6 +418,9 @@ export function eventTakePlaceOn(evetnOn) {
           console.log(error);
           if (error.response && error.response.status === 401) {
             alert("You are not an admin");
+          }
+          if (error.response && error.response.status === 404) {
+            alert("Member not Found");
           }
         }
       }

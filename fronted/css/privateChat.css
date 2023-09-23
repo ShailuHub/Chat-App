@@ -260,7 +260,9 @@ p {
   .right-container {
     width: 100%;
   }
-
+  .main-container {
+    padding: 0;
+  }
   #right-container {
     margin: auto;
   }

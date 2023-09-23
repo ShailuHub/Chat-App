@@ -25,6 +25,7 @@ const activeUser = document.getElementById("active-user");
 const addUserBtn = document.getElementById("add-user-btn");
 
 const logOutBtn = document.getElementById("log-out-btn");
+const emojiBtn = document.getElementById("emojiBtn");
 
 // First-time flags
 let firstTimeOneToOneMsg = true;
@@ -259,4 +260,4 @@ if (window.location.pathname === "/user/chat") {
   messageForm.addEventListener("submit", postMessage);
 }
 
-export { userDetails, allUsers, messageBox, activeUser, messageForm };
+export { userDetails, allUsers, messageBox, activeUser, messageForm, emojiBtn };
