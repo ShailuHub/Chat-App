@@ -7,6 +7,7 @@ import {
   getAddToContactPage,
   getSearchOrAdd,
   getGroupExcludedList,
+  deleteMember,
 } from "../controllers/contact";
 const router = Router();
 
@@ -24,5 +25,7 @@ router.delete(
   authenticate,
   deleteContact
 );
+
+router.delete("/user/remove/contact/:userId", authenticate, deleteMember);
 
 export default router;

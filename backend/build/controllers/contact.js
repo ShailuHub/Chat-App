@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGroupExcludedList = exports.getSearchOrAdd = exports.getAddToContactPage = exports.deleteContact = exports.createNewContact = exports.getAddContactPage = void 0;
+exports.deleteMember = exports.getGroupExcludedList = exports.getSearchOrAdd = exports.getAddToContactPage = exports.deleteContact = exports.createNewContact = exports.getAddContactPage = void 0;
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
 const index_1 = require("../models/index");
@@ -159,3 +159,38 @@ const getGroupExcludedList = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getGroupExcludedList = getGroupExcludedList;
+const deleteMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
+    const userId = (_f = req.user) === null || _f === void 0 ? void 0 : _f.userId;
+    const deleteId = Number(req.params.userId);
+    try {
+        const member = yield index_1.Member.findOne({
+            where: { userId: userId },
+            attributes: ["isAdmin"],
+        });
+        if (member) {
+            try {
+                const deleteMember = yield index_1.Member.findOne({
+                    where: { userId: deleteId },
+                });
+                if (deleteMember) {
+                    deleteMember.destroy();
+                    res.status(200).send({ message: "Member is removed" });
+                }
+                else {
+                    return res.status(404).send({ message: "Member not found" });
+                }
+            }
+            catch (error) {
+                res.status(500).send({ message: "Internal server error" });
+            }
+        }
+        else {
+            return res.status(401).send({ message: "You are not an admin" });
+        }
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.deleteMember = deleteMember;

@@ -13,4 +13,5 @@ router.get("/user/remaining/chat/list/:groupId", authenticate_1.default, contact
 router.get("/user/toContact", contact_1.getAddToContactPage);
 router.post("/user/createContact", authenticate_1.default, contact_1.createNewContact);
 router.delete("/user/delete/contact/:phone/:user2_id", authenticate_1.default, contact_1.deleteContact);
+router.delete("/user/remove/contact/:userId", authenticate_1.default, contact_1.deleteMember);
 exports.default = router;

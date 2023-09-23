@@ -274,6 +274,16 @@ const getPrivateChat = async (req: Request, res: Response) => {
   res.status(200).sendFile(filePath);
 };
 
+const getGroupPrivateChat = async (req: Request, res: Response) => {
+  const filePath: string = path.join(
+    __dirname,
+    absolutePath,
+    "html",
+    "groupPrivateChat.html"
+  );
+  res.status(200).sendFile(filePath);
+};
+
 export {
   postMessage,
   getOneToOneMsg,
@@ -282,4 +292,5 @@ export {
   MsgFromUnknown,
   unknownMsg,
   getPrivateChat,
+  getGroupPrivateChat,
 };

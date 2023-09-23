@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPrivateChat = exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
+exports.getGroupPrivateChat = exports.getPrivateChat = exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
 const index_1 = require("../models/index");
 const sequelize_1 = __importDefault(require("sequelize"));
 const path_1 = __importDefault(require("path"));
@@ -279,3 +279,8 @@ const getPrivateChat = (req, res) => __awaiter(void 0, void 0, void 0, function*
     res.status(200).sendFile(filePath);
 });
 exports.getPrivateChat = getPrivateChat;
+const getGroupPrivateChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filePath = path_1.default.join(__dirname, path_2.absolutePath, "html", "groupPrivateChat.html");
+    res.status(200).sendFile(filePath);
+});
+exports.getGroupPrivateChat = getGroupPrivateChat;

@@ -6,8 +6,9 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-
+import morgan from "morgan";
 import { User } from "./models/index";
+import fs from "fs";
 
 import path from "path";
 import {
@@ -18,8 +19,8 @@ import {
 } from "./routes/index";
 
 import sequelize from "./utils/database";
-import { ValidationErrorItemOrigin } from "sequelize";
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -39,6 +40,11 @@ app.use(userRouter);
 app.use(messageRouter);
 app.use(contactRouter);
 app.use(groupRouter);
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
 
 // Handle WebSocket connections
 io.on("connection", async (socket) => {
@@ -112,11 +118,11 @@ io.on("connection", async (socket) => {
 
 // Synchronize the database models with the database
 sequelize
-  .sync()
+  .sync({ force: true })
   .then(() => {
     // Start the server on port 3000
-    server.listen(3000, () => {
-      console.log("Server is working on port 3000");
+    server.listen(PORT, () => {
+      console.log(`Server is working on port ${PORT}`);
     });
   })
   .catch((err) => {

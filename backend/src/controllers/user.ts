@@ -135,6 +135,7 @@ const postLogin = async (req: Request, res: Response) => {
           message: "Logged in",
           token: token,
           ownerId: user.userId,
+          ownerName: user.username,
         });
       } else {
         // Unauthorized user (incorrect password)

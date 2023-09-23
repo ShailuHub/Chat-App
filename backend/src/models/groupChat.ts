@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../utils/database";
 import { User } from "./user";
+import { Conversation } from "./conversation";
 class GroupChatModel extends Model {
   public groupId!: number;
   public groupName!: string;
@@ -30,4 +31,8 @@ GroupChatModel.init(
 );
 
 GroupChatModel.belongsTo(User, { foreignKey: "adminId" });
+GroupChatModel.hasOne(Conversation, {
+  foreignKey: "groupId",
+  onDelete: "CASCADE",
+});
 export { GroupChatModel as GroupChat };

@@ -165,7 +165,47 @@ const removeAdmin = async (req: Request, res: Response) => {
   toggleAdminStatus(req, res, false);
 };
 
-const deleteGroup = async (req: Request, res: Response) => {};
+const deleteGroup = async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const groupId: number = Number(req.params.groupId);
+
+  try {
+    // Check if the user is an admin of the group
+    const isAdmin = await Member.findOne({
+      where: { userId: userId },
+      attributes: ["isAdmin"],
+    });
+
+    if (isAdmin) {
+      try {
+        // Find and delete the group
+        const deleteGroup = await GroupChat.findOne({
+          where: { groupId: groupId, adminId: userId },
+        });
+
+        if (deleteGroup) {
+          // Delete the associated conversations
+          await Conversation.destroy({
+            where: { groupId: groupId },
+          });
+
+          // Delete the group
+          await deleteGroup.destroy();
+
+          return res.status(200).send({ message: "Group is deleted" });
+        } else {
+          return res.status(404).send({ message: "Group is not found" });
+        }
+      } catch (error) {
+        res.status(500).send({ message: "Internal server error" });
+      }
+    } else {
+      return res.status(401).send({ message: "You are not an admin" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
 
 export {
   postGroup,

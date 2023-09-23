@@ -7,6 +7,7 @@ exports.GroupChat = void 0;
 const sequelize_1 = require("sequelize");
 const database_1 = __importDefault(require("../utils/database"));
 const user_1 = require("./user");
+const conversation_1 = require("./conversation");
 class GroupChatModel extends sequelize_1.Model {
 }
 exports.GroupChat = GroupChatModel;
@@ -27,3 +28,7 @@ GroupChatModel.init({
     },
 }, { sequelize: database_1.default, modelName: "GroupChat" });
 GroupChatModel.belongsTo(user_1.User, { foreignKey: "adminId" });
+GroupChatModel.hasOne(conversation_1.Conversation, {
+    foreignKey: "groupId",
+    onDelete: "CASCADE",
+});

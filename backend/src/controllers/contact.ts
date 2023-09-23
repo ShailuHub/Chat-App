@@ -160,6 +160,36 @@ const getGroupExcludedList = async (req: Request, res: Response) => {
   }
 };
 
+const deleteMember = async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const deleteId: number = Number(req.params.userId);
+  try {
+    const member = await Member.findOne({
+      where: { userId: userId },
+      attributes: ["isAdmin"],
+    });
+    if (member) {
+      try {
+        const deleteMember = await Member.findOne({
+          where: { userId: deleteId },
+        });
+        if (deleteMember) {
+          deleteMember.destroy();
+          res.status(200).send({ message: "Member is removed" });
+        } else {
+          return res.status(404).send({ message: "Member not found" });
+        }
+      } catch (error) {
+        res.status(500).send({ message: "Internal server error" });
+      }
+    } else {
+      return res.status(401).send({ message: "You are not an admin" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
 export {
   getAddContactPage,
   createNewContact,
@@ -167,4 +197,5 @@ export {
   getAddToContactPage,
   getSearchOrAdd,
   getGroupExcludedList,
+  deleteMember,
 };
