@@ -18,7 +18,6 @@ async function showRemainingContacts() {
       }
     );
 
-    console.log(response.data);
     if (response.data.contacts.length > 0) {
       // Display each user in the list
       response.data.contacts.forEach((user) => {

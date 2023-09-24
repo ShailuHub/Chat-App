@@ -33,7 +33,7 @@ let socket = io("/", {
 });
 
 // API Base URL
-let baseURL = "http://localhost:3000";
+let baseURL = "http://65.1.107.213:3000";
 
 // Function to display a message in the message box
 export function displayMessage(username, message, user) {

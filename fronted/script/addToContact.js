@@ -2,7 +2,7 @@ const form = document.getElementById("form");
 const phoneInput = document.getElementById("phone");
 const username = document.getElementById("username");
 const chatListContainer = document.getElementById("chat-list-container");
-const baseURL = "http://localhost:3000";
+const baseURL = "http://65.1.107.213:3000";
 
 const phoneNumber = localStorage.getItem("addToContact");
 phoneInput.value = phoneNumber;

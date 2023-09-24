@@ -18,7 +18,7 @@ const deleteGroup = document.getElementById("delete-group-btn");
 const showGroupChatMessageBtn = document.getElementById("show-msg-custom-btn");
 
 // Create a Socket.IO connection
-let baseURL = "http://localhost:3000";
+let baseURL = "http://65.1.107.213:3000";
 var socket = io();
 
 let groupDetails = JSON.parse(localStorage.getItem("groupDetails"));

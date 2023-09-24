@@ -29,7 +29,7 @@ const emojiBtn = document.getElementById("emojiBtn");
 
 // First-time flags
 let firstTimeOneToOneMsg = true;
-const baseURL = "http://localhost:3000";
+const baseURL = "http://65.1.107.213:3000";
 //Function to log out
 if (logOutBtn) {
   logOutBtn.addEventListener("click", () => {

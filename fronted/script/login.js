@@ -10,7 +10,7 @@ const logSuccess = document.getElementById("log-success");
 const emailUnsuccess = document.getElementById("email-unsuccess");
 const internalUnsuccess = document.getElementById("internal-unsuccess");
 const form = document.getElementById("form");
-const baseURL = "http://localhost:3000";
+const baseURL = "http://65.1.107.213:3000";
 
 // Event listeners
 signup_mainBtn.addEventListener("click", () => {
