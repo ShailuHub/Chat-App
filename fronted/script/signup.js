@@ -11,7 +11,7 @@ const emailUnsuccess = document.getElementById("email-unsuccess");
 const internalUnsuccess = document.getElementById("internal-unsuccess");
 const phoneUnsuccess = document.getElementById("phone-unsuccess");
 const login = document.getElementById("login-main-btn");
-const baseURL = "http://localhost:3000";
+const baseURL = "http://65.1.107.213:3000";
 
 login.addEventListener("click", () => {
   window.location.href = "/user/login";

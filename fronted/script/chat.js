@@ -12,7 +12,6 @@ import {
   onLineUser,
   postMessage,
   displayUnKnownUser,
-  socket,
 } from "./common.js";
 
 // DOM Elements
@@ -27,9 +26,7 @@ const addUserBtn = document.getElementById("add-user-btn");
 const logOutBtn = document.getElementById("log-out-btn");
 const emojiBtn = document.getElementById("emojiBtn");
 
-// First-time flags
-let firstTimeOneToOneMsg = true;
-const baseURL = "http://localhost:3000";
+const baseURL = "http://65.1.107.213:3000";
 //Function to log out
 if (logOutBtn) {
   logOutBtn.addEventListener("click", () => {
@@ -147,7 +144,6 @@ if (allUsers) {
 
         // Display user information
         onLineUser(userChatRow.parentElement.dataset.username);
-        firstTimeOneToOneMsg = false;
       }
     } else if (datasetConversationId && datasetConversationId) {
       const senderId = Number(datasersenderId);
@@ -167,7 +163,6 @@ if (allUsers) {
 
         // Display user information
         onLineUser(userChatRow.parentElement.dataset.phone);
-        firstTimeOneToOneMsg = false;
       }
     } else {
       // Find the closest chat-row element with dataset.groupId and dataset.adminId
