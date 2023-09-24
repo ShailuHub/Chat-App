@@ -33,7 +33,7 @@ let socket = io("/", {
 });
 
 // API Base URL
-let baseURL = "http://65.1.107.213:3000";
+let baseURL = "http://localhost:3000";
 
 // Function to display a message in the message box
 export function displayMessage(username, message, user) {
@@ -59,7 +59,11 @@ export async function postMessage(event) {
     user2_id = Number(userDetails.user2_id);
   } else {
     const userDetails = JSON.parse(localStorage.getItem("userDetails"));
-    user2_id = Number(userDetails.user2_id);
+    if (userDetails) {
+      user2_id = Number(userDetails.user2_id);
+    } else {
+      user2_id = Number(localStorage.getItem("senderId"));
+    }
   }
   try {
     if (user2_id > 0) {
@@ -337,6 +341,7 @@ export function eventTakePlaceOn(evetnOn) {
                     headers: { Authorization: token },
                   }
                 );
+                localStorage.removeItem("userDetails");
                 if (response.status === 200) {
                   window.location.href = "/user/chat";
                 } else {

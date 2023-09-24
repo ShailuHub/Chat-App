@@ -106,7 +106,7 @@ io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 // Synchronize the database models with the database
 database_1.default
-    .sync({ force: true })
+    .sync()
     .then(() => {
     // Start the server on port 3000
     server.listen(PORT, () => {

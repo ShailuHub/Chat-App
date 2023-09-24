@@ -24,6 +24,10 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
 
 // Enable CORS for your Express app
 app.use(cors());
@@ -34,17 +38,13 @@ app.use(express.static(path.join(__dirname, "..", "..", "fronted")));
 // Set up body parsing for JSON and form data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 // Set up your Express routers
 app.use(userRouter);
 app.use(messageRouter);
 app.use(contactRouter);
 app.use(groupRouter);
-
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  { flags: "a" }
-);
 
 // Handle WebSocket connections
 io.on("connection", async (socket) => {
@@ -118,7 +118,7 @@ io.on("connection", async (socket) => {
 
 // Synchronize the database models with the database
 sequelize
-  .sync({ force: true })
+  .sync()
   .then(() => {
     // Start the server on port 3000
     server.listen(PORT, () => {

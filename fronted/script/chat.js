@@ -29,7 +29,7 @@ const emojiBtn = document.getElementById("emojiBtn");
 
 // First-time flags
 let firstTimeOneToOneMsg = true;
-const baseURL = "http://65.1.107.213:3000";
+const baseURL = "http://localhost:3000";
 //Function to log out
 if (logOutBtn) {
   logOutBtn.addEventListener("click", () => {
@@ -151,18 +151,19 @@ if (allUsers) {
       }
     } else if (datasetConversationId && datasetConversationId) {
       const senderId = Number(datasersenderId);
-      user2_id = senderId;
-      userDetails.user2_id = user2_id;
+      localStorage.setItem("senderId", senderId);
       const mediaQuery = window.matchMedia("(max-width:992px)");
       if (mediaQuery.matches) {
         window.location.href = "/user/privateChat";
       } else {
         // Highlight the selected user
+        console.log("Gud");
         removeAllActiveUserClasses();
         userChatRow.classList.add("active-user-bg");
 
         // Load one-to-one messages for the selected user
-        getoneToMessage(user2_id);
+        console.log(senderId);
+        getoneToMessage(senderId);
 
         // Display user information
         onLineUser(userChatRow.parentElement.dataset.phone);

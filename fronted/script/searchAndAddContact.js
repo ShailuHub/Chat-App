@@ -1,6 +1,6 @@
 const showAddMemberBtn = document.getElementById("custom-btn");
 
-const groupDetail = JSON.parse(localStorage.getItem("groupDetail"));
+const groupDetails = JSON.parse(localStorage.getItem("groupDetails"));
 
 async function showRemainingContacts() {
   // Get the user's token from local storage
@@ -12,17 +12,19 @@ async function showRemainingContacts() {
   try {
     // Fetch the list of all users
     const response = await axios.get(
-      `${baseURL}/user/remaining/chat/list/${groupDetail.groupId}`,
+      `${baseURL}/user/remaining/chat/list/${groupDetails.groupId}`,
       {
         headers: { Authorization: token },
       }
     );
-
     if (response.data.contacts.length > 0) {
       // Display each user in the list
       response.data.contacts.forEach((user) => {
         displayUsers(user.username, user.addedId, user.phone, "add");
       });
+    } else {
+      const noContacts = document.getElementById("no-contacts");
+      noContacts.style.display = "block";
     }
   } catch (error) {
     console.error(error);
