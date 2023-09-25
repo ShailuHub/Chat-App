@@ -2,9 +2,9 @@ import {
   getoneToMessage,
   onLineUser,
   postMessage,
-  socket,
   displayMessage,
   scrollBarDown,
+  socket,
 } from "./common.js";
 
 // DOM Elements

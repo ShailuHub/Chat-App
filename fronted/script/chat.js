@@ -14,6 +14,9 @@ import {
   displayUnKnownUser,
 } from "./common.js";
 
+import { baseURL } from "./variable.js";
+
+import { emojiBtn } from "./variable.js";
 // DOM Elements
 const messageForm = document.getElementById("message-form");
 
@@ -24,9 +27,7 @@ const activeUser = document.getElementById("active-user");
 const addUserBtn = document.getElementById("add-user-btn");
 
 const logOutBtn = document.getElementById("log-out-btn");
-const emojiBtn = document.getElementById("emojiBtn");
 
-const baseURL = "http://65.1.107.213:3000";
 //Function to log out
 if (logOutBtn) {
   logOutBtn.addEventListener("click", () => {
@@ -246,14 +247,14 @@ async function getAllUnknownMsg() {
 }
 
 // Initial data retrieval
-getAllUnknownMsg();
-getAllUsers();
-getAllGroup();
-eventTakePlaceOn(allUsers);
 
 if (window.location.pathname === "/user/chat") {
+  getAllUnknownMsg();
+  getAllUsers();
+  getAllGroup();
+  eventTakePlaceOn(allUsers);
   // Event listener to handle message submission
   messageForm.addEventListener("submit", postMessage);
 }
 
-export { userDetails, allUsers, messageBox, activeUser, messageForm, emojiBtn };
+export { userDetails, allUsers, messageBox, activeUser, messageForm };

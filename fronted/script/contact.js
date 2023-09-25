@@ -1,3 +1,4 @@
+import { baseURL } from "./variable.js";
 // Get references to HTML elements
 const allUsers = document.getElementById("all-users");
 const createGroupBtn = document.getElementById("newGroupBtn");
@@ -10,7 +11,6 @@ const phone = document.getElementById("phone");
 const username = document.getElementById("username");
 const nextBtn = document.getElementById("next-btn");
 const form = document.getElementById("form");
-const baseURL = "http://65.1.107.213:3000";
 
 let type = "create";
 // Event listener for form submission

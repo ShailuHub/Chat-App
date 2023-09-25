@@ -1,29 +1,8 @@
 // Import necessary modules and components
 import { allUsers, messageBox, activeUser, messageForm } from "./chat.js";
 import { allMembers } from "./groupChat.js";
-import { userDetails, emojiBtn } from "./chat.js";
-
-const pickerOptions = {
-  onEmojiSelect: handleEmojiSelect,
-};
-const emojiPicker = new EmojiMart.Picker(pickerOptions);
-
-let isPickerVisible = false;
-emojiBtn.addEventListener("click", () => {
-  const emojiContainer = document.getElementById("emojiContainer");
-  if (!isPickerVisible) {
-    emojiContainer.appendChild(emojiPicker);
-    isPickerVisible = true;
-  } else {
-    emojiPicker.remove();
-    isPickerVisible = false;
-  }
-});
-
-function handleEmojiSelect(emoji) {
-  const message = document.getElementById("message");
-  message.value += emoji.native;
-}
+import { userDetails } from "./chat.js";
+import { baseURL, emojiBtn } from "./variable.js";
 
 // Create a Socket.IO connection
 let socket = io("/", {
@@ -32,8 +11,29 @@ let socket = io("/", {
   },
 });
 
-// API Base URL
-let baseURL = "http://65.1.107.213:3000";
+const pickerOptions = {
+  onEmojiSelect: handleEmojiSelect,
+};
+const emojiPicker = new EmojiMart.Picker(pickerOptions);
+
+let isPickerVisible = false;
+if (emojiBtn) {
+  emojiBtn.addEventListener("click", () => {
+    const emojiContainer = document.getElementById("emojiContainer");
+    if (!isPickerVisible) {
+      emojiContainer.appendChild(emojiPicker);
+      isPickerVisible = true;
+    } else {
+      emojiPicker.remove();
+      isPickerVisible = false;
+    }
+  });
+}
+
+function handleEmojiSelect(emoji) {
+  const message = document.getElementById("message");
+  message.value += emoji.native;
+}
 
 // Function to display a message in the message box
 export function displayMessage(username, message, user) {
@@ -486,7 +486,7 @@ if (window.location.pathname === "/user/chat") {
       user2_id = userDetails.user2_id;
     } else {
       const userDetails = JSON.parse(localStorage.getItem("userDetails"));
-      user2_id = userDetails.user2_id;
+      if (userDetails) user2_id = userDetails.user2_id;
     }
 
     if (data.recieverId == ownerId && data.senderId == user2_id) {
@@ -514,4 +514,4 @@ if (window.location.pathname === "/user/chat") {
   });
 }
 
-export { baseURL, socket };
+export { baseURL, socket, emojiPicker };

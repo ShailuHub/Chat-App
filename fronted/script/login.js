@@ -1,22 +1,20 @@
-// DOM Elements
-const login_mainBtn = document.getElementById("login-main-btn");
-const signup_mainBtn = document.getElementById("signup-main-btn");
-const loginBtn = document.getElementById("login-btn");
-const forgotBtn = document.getElementById("forgot-password-btn");
-const registerBtn = document.getElementById("register-btn");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const logSuccess = document.getElementById("log-success");
-const emailUnsuccess = document.getElementById("email-unsuccess");
-const internalUnsuccess = document.getElementById("internal-unsuccess");
-const form = document.getElementById("form");
-const baseURL = "http://65.1.107.213:3000";
+import {
+  baseURL,
+  email,
+  password,
+  signup_mainBtn,
+  emailUnsuccess,
+  internalUnsuccess,
+  form,
+} from "./variable.js";
 
 // Event listeners
-signup_mainBtn.addEventListener("click", () => {
-  // Redirect to signup page
-  window.location.href = "/user/signup";
-});
+if (signup_mainBtn) {
+  signup_mainBtn.addEventListener("click", () => {
+    // Redirect to signup page
+    window.location.href = "/user/signup";
+  });
+}
 
 form.addEventListener("submit", postLoginDetails);
 

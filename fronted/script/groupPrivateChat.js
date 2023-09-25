@@ -1,5 +1,5 @@
 import { postGroupMessage, getGroupMessage } from "./groupChat.js";
-import { socket, onLineUser, displayMessage, scrollBarDown } from "./common.js";
+import { onLineUser, displayMessage, scrollBarDown, socket } from "./common.js";
 
 // DOM Elements
 const messageForm = document.getElementById("message-form");

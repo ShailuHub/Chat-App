@@ -20,6 +20,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
+const morgan_1 = __importDefault(require("morgan"));
 const index_1 = require("./models/index");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -30,6 +31,7 @@ const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server);
 exports.io = io;
+const accessLogStream = fs_1.default.createWriteStream(path_1.default.join(__dirname, "access.log"), { flags: "a" });
 // Enable CORS for your Express app
 app.use((0, cors_1.default)());
 // Serve static files (e.g., front-end files)
@@ -37,12 +39,12 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "..", "..", "fro
 // Set up body parsing for JSON and form data
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
+app.use((0, morgan_1.default)("combined", { stream: accessLogStream }));
 // Set up your Express routers
 app.use(index_2.userRouter);
 app.use(index_2.messageRouter);
 app.use(index_2.contactRouter);
 app.use(index_2.groupRouter);
-const accessLogStream = fs_1.default.createWriteStream(path_1.default.join(__dirname, "access.log"), { flags: "a" });
 // Handle WebSocket connections
 io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
     // Get the userId from the socket handshake

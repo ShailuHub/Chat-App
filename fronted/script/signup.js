@@ -1,17 +1,18 @@
-const username = document.getElementById("name");
-const email = document.getElementById("email");
-const phone = document.getElementById("phone");
-const password = document.getElementById("password");
-const confirm_password = document.getElementById("confirm-password");
-const form = document.getElementById("form");
-const regSuccess = document.getElementById("reg-success");
-const regUnSuccess = document.getElementById("reg-unsuccess");
-const passUnSuccess = document.getElementById("pass-unsuccess");
-const emailUnsuccess = document.getElementById("email-unsuccess");
-const internalUnsuccess = document.getElementById("internal-unsuccess");
-const phoneUnsuccess = document.getElementById("phone-unsuccess");
-const login = document.getElementById("login-main-btn");
-const baseURL = "http://65.1.107.213:3000";
+import {
+  baseURL,
+  email,
+  password,
+  username,
+  phone,
+  confirm_password,
+  form,
+  regSuccess,
+  passUnSuccess,
+  emailUnsuccess,
+  internalUnsuccess,
+  phoneUnsuccess,
+  login,
+} from "./variable.js";
 
 login.addEventListener("click", () => {
   window.location.href = "/user/login";

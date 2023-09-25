@@ -5,8 +5,10 @@ import {
   displayMessage,
   displayUsers,
   scrollBarDown,
+  socket,
+  emojiPicker,
 } from "./common.js";
-
+import { baseURL } from "./variable.js";
 // DOM Elements
 const messageForm = document.getElementById("message-form");
 const message = document.getElementById("message");
@@ -16,10 +18,6 @@ const addUserBtn = document.getElementById("add-user-btn");
 const showAddMemberBtn = document.getElementById("custom-btn");
 const deleteGroup = document.getElementById("delete-group-btn");
 const showGroupChatMessageBtn = document.getElementById("show-msg-custom-btn");
-
-// Create a Socket.IO connection
-let baseURL = "http://65.1.107.213:3000";
-var socket = io();
 
 let groupDetails = JSON.parse(localStorage.getItem("groupDetails"));
 
@@ -43,6 +41,7 @@ export async function postGroupMessage(event) {
           scrollBarDown();
           if (response.status === 200) {
             socket.emit("groupChat", response.data);
+            emojiPicker.remove();
             messageForm.reset();
           }
         }
