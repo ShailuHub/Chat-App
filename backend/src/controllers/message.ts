@@ -3,6 +3,8 @@ import { User, Message, Conversation, Contact } from "../models/index";
 import Sequelize from "sequelize";
 import path from "path";
 import { absolutePath } from "../utils/path";
+import { uploadToS3 } from "../services/fileUpload";
+import { File } from "../models/fileModel";
 
 const postMessage = async (req: Request, res: Response) => {
   // Get the user ID and message from the request body
@@ -284,6 +286,118 @@ const getGroupPrivateChat = async (req: Request, res: Response) => {
   res.status(200).sendFile(filePath);
 };
 
+const postUploadFile = async (req: Request, res: Response) => {
+  const user1_id = req.user?.userId;
+  const user2_id = Number(req.params.user2_id);
+  let conversationId = await Conversation.findOne({
+    where: {
+      [Sequelize.Op.or]: [
+        {
+          user1_id: user1_id,
+          user2_id: user2_id,
+        },
+        {
+          user1_id: user2_id,
+          user2_id: user1_id,
+        },
+      ],
+    },
+    attributes: ["conversationId"],
+  });
+  if (!conversationId) return res.status(400).send("No conversation exists");
+  const files: any = req.files;
+  try {
+    if (files?.length === 0) {
+      return res.status(400).send("No file uploaded.");
+    } else {
+      const uploadResponses: any[] = [];
+      const filePromises = files.map(async (file: any) => {
+        const { buffer, originalname, mimetype } = file;
+        const fileUrl = await uploadToS3(buffer, originalname);
+        uploadResponses.push({ fileUrl, originalname });
+        const isfileExists = await File.findOne({
+          where: { fileName: originalname },
+        });
+        if (!isfileExists) {
+          await File.create({
+            fileName: originalname,
+            fileType: mimetype,
+            fileUrl: fileUrl,
+            conversationId: Number(conversationId?.conversationId),
+            senderId: user1_id,
+          });
+        }
+        await Message.create({
+          sendername: req.user?.username,
+          conversationId: Number(conversationId?.conversationId),
+          message: fileUrl,
+          senderId: user1_id,
+        });
+      });
+      await Promise.all(filePromises);
+      res.status(200).send({
+        message: "file recieved",
+        data: uploadResponses,
+        senderId: user1_id,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+const postGroupUploadFile = async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const groupId: number = Number(req.params.groupId);
+  // Check if the conversation (group) exists
+  const conversationId = await Conversation.findOne({
+    where: { groupId: groupId },
+  });
+
+  if (!conversationId) return res.status(400).send("No conversation exists");
+  const files: any = req.files;
+  try {
+    if (files?.length === 0) {
+      return res.status(400).send("No file uploaded.");
+    } else {
+      const uploadResponses: any[] = [];
+      const filePromises = files.map(async (file: any) => {
+        const { buffer, originalname, mimetype } = file;
+        const fileUrl = await uploadToS3(buffer, originalname);
+        uploadResponses.push({ fileUrl, originalname });
+        const isfileExists = await File.findOne({
+          where: { fileName: originalname },
+        });
+        if (!isfileExists) {
+          await File.create({
+            fileName: originalname,
+            fileType: mimetype,
+            fileUrl: fileUrl,
+            conversationId: Number(conversationId?.conversationId),
+            senderId: userId,
+          });
+        }
+        await Message.create({
+          sendername: req.user?.username,
+          conversationId: Number(conversationId?.conversationId),
+          message: fileUrl,
+          senderId: userId,
+        });
+      });
+      await Promise.all(filePromises);
+      res.status(200).send({
+        message: "file recieved",
+        data: uploadResponses,
+        senderId: userId,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
 export {
   postMessage,
   getOneToOneMsg,
@@ -293,4 +407,6 @@ export {
   unknownMsg,
   getPrivateChat,
   getGroupPrivateChat,
+  postUploadFile,
+  postGroupUploadFile,
 };

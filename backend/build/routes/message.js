@@ -9,6 +9,7 @@ const router = (0, express_1.Router)();
 const message_1 = require("../controllers/message");
 // Import your authentication middleware
 const authenticate_1 = __importDefault(require("../middleware/authenticate"));
+const multerConfiguration_1 = require("../middleware/multerConfiguration");
 // Define routes with comments
 // Route to send a one-to-one message
 router.post("/user/chat/oneToOne/msg/:user2_id", authenticate_1.default, message_1.postMessage);
@@ -23,4 +24,6 @@ router.get("/user/chat/msg/unknown", authenticate_1.default, message_1.MsgFromUn
 router.get("/user/privateChat", message_1.getPrivateChat);
 router.get("/group/privateChat", message_1.getGroupPrivateChat);
 router.get("/user/chat/usknownMsg/msg/:userId/:conversationId", authenticate_1.default, message_1.unknownMsg);
+router.post("/user/uploadFile/:user2_id", authenticate_1.default, multerConfiguration_1.upload.array("files"), message_1.postUploadFile);
+router.post("/user/uploadFile/group/:groupId", authenticate_1.default, multerConfiguration_1.upload.array("files"), message_1.postGroupUploadFile);
 exports.default = router;

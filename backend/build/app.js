@@ -73,10 +73,19 @@ io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
         // Broadcast the message to all clients except the sender
         socket.broadcast.emit("msgFor", details);
     });
+    //Handle ont-to-one file
+    socket.on("oneToOneFile", (details) => {
+        socket.broadcast.emit("fileMsg", details);
+    });
     // Handle group chat messages
     socket.on("groupChat", (details) => {
         // Broadcast the group message to all clients
         socket.broadcast.emit("msgForGroup", details);
+    });
+    //Handle group file
+    socket.on("fileGroupChat", (details) => {
+        // Broadcast the group me
+        socket.broadcast.emit("fileMessageForGroup", details);
     });
     // Handle "disconnect" event
     socket.on("disconnect", () => __awaiter(void 0, void 0, void 0, function* () {

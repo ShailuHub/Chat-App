@@ -13,6 +13,8 @@ const internalUnsuccess = document.getElementById("internal-unsuccess");
 const phoneUnsuccess = document.getElementById("phone-unsuccess");
 const login = document.getElementById("login-main-btn");
 const signup_mainBtn = document.getElementById("signup-main-btn");
+const fileUploadButton = document.getElementById("file-upload-btn");
+const fileUploadInput = document.getElementById("fileUpload");
 
 export {
   baseURL,
@@ -30,4 +32,6 @@ export {
   phoneUnsuccess,
   login,
   signup_mainBtn,
+  fileUploadButton,
+  fileUploadInput,
 };

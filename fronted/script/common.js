@@ -2,7 +2,12 @@
 import { allUsers, messageBox, activeUser, messageForm } from "./chat.js";
 import { allMembers } from "./groupChat.js";
 import { userDetails } from "./chat.js";
-import { baseURL, emojiBtn } from "./variable.js";
+import {
+  baseURL,
+  emojiBtn,
+  fileUploadButton,
+  fileUploadInput,
+} from "./variable.js";
 
 // Create a Socket.IO connection
 let socket = io("/", {
@@ -49,12 +54,52 @@ export function displayMessage(username, message, user) {
   messageBox.appendChild(div);
 }
 
+// Function to display a message in the message box
+export function fileMessage(fileUrl, message, user) {
+  const div = document.createElement("div");
+  div.classList.add("container");
+
+  const a = document.createElement("a");
+  a.href = `${fileUrl}`;
+  a.target = `_blank`;
+  a.classList.add("text-light");
+  a.innerHTML = `${message}`;
+  const p = document.createElement("p");
+  p.classList.add("bg-secondary");
+  p.innerHTML = `<span class="text-dark fw-bold">Download File: </span>`;
+  p.appendChild(a);
+  div.appendChild(p);
+  if (user === "user") {
+    div.classList.add("user");
+  }
+  messageBox.appendChild(div);
+}
+
+let messageType = "text";
+
+// Check for changes in the file input field
+fileUploadInput.addEventListener("change", () => {
+  if (fileUploadInput.files.length > 0) {
+    // User has selected one or more files
+    message.readOnly = true;
+    messageType = "file";
+    for (let i = 0; i < fileUploadInput.files.length; ++i) {
+      message.value += `${i + 1}. ${fileUploadInput.files[i].name} `;
+    }
+  } else {
+    // No files selected
+    messageType = "text";
+    message.readOnly = false; // Allow text input
+    message.value = ""; // Clear the message input
+  }
+});
+
 // Function to handle form submission
 export async function postMessage(event) {
   event.preventDefault();
-  const details = { message: message.value };
   const token = localStorage.getItem("token");
   let user2_id = 0;
+
   if (Object.keys(userDetails).length > 0) {
     user2_id = Number(userDetails.user2_id);
   } else {
@@ -65,25 +110,133 @@ export async function postMessage(event) {
       user2_id = Number(localStorage.getItem("senderId"));
     }
   }
+
   try {
     if (user2_id > 0) {
-      const response = await axios.post(
-        `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
-        details,
-        { headers: { Authorization: token } }
-      );
-      if (response.status === 200) {
-        socket.emit("oneToOneMsg", response.data);
-        // Display the user's message
-        displayMessage("You", details.message, "user");
-        scrollBarDown();
-        emojiPicker.remove();
-        messageForm.reset();
+      if (messageType === "file") {
+        // Handle file message submission
+        if (fileUploadInput.files.length > 0) {
+          const formData = new FormData(messageForm);
+          const response = await axios.post(
+            `${baseURL}/user/uploadFile/${user2_id}`,
+            formData,
+            {
+              headers: {
+                Authorization: token,
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          if (response.status === 200) {
+            // Handle the file upload response
+            message.readOnly = false;
+            const fileUrl = response.data.data;
+            fileUrl.forEach((file) => {
+              socket.emit("oneToOneFile", { user2_id, file });
+              fileMessage(file.fileUrl, file.originalname, "user");
+              scrollBarDown();
+              emojiPicker.remove();
+              messageForm.reset();
+            });
+          }
+        }
+      } else {
+        // Handle text message submission
+        if (message.value.trim() !== "") {
+          // User has entered a text message
+          const details = { message: message.value };
+          const response = await axios.post(
+            `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
+            details,
+            { headers: { Authorization: token } }
+          );
+
+          if (response.status === 200) {
+            socket.emit("oneToOneMsg", response.data);
+            // Display the user's text message
+            displayMessage("You", details.message, "user");
+            scrollBarDown();
+            emojiPicker.remove();
+            messageForm.reset();
+          }
+        }
       }
     }
   } catch (error) {
     console.error(error);
   }
+}
+
+// // Function to handle form submission
+// export async function postMessage(event) {
+//   event.preventDefault();
+//   const token = localStorage.getItem("token");
+//   let user2_id = 0;
+//   if (Object.keys(userDetails).length > 0) {
+//     user2_id = Number(userDetails.user2_id);
+//   } else {
+//     const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+//     if (userDetails) {
+//       user2_id = Number(userDetails.user2_id);
+//     } else {
+//       user2_id = Number(localStorage.getItem("senderId"));
+//     }
+//   }
+//   try {
+//     if (user2_id > 0) {
+//       if (fileUploadInput.files.length > 0) {
+//         // User has selected files for upload
+//         const formData = new FormData(messageForm);
+//         const response = await axios.post(
+//           `${baseURL}/user/uploadFile/${user2_id}`,
+//           formData,
+//           {
+//             headers: {
+//               Authorization: token,
+//               "Content-Type": "multipart/form-data",
+//             },
+//           }
+//         );
+
+//         if (response.status === 200) {
+//           message.readOnly = false;
+//           const fileUrl = response.data.data;
+//           fileUrl.forEach((file) => {
+//             socket.emit("oneToOneFile", { user2_id, file });
+//           });
+//           console.log(response.data);
+//         }
+//       }
+
+// if (message.value.trim() !== "") {
+//   // User has entered a text message
+//   const details = { message: message.value };
+//   const response = await axios.post(
+//     `${baseURL}/user/chat/oneToOne/msg/${user2_id}`,
+//     details,
+//     { headers: { Authorization: token } }
+//   );
+
+//   if (response.status === 200) {
+//     socket.emit("oneToOneMsg", response.data);
+//     // Display the user's text message
+//     displayMessage("You", details.message, "user");
+//     scrollBarDown();
+//     emojiPicker.remove();
+//     messageForm.reset();
+//   }
+// }
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+//Function to check if give text is url of text
+export function isURL(text) {
+  const urlPattern = /^https?:\/\/.*$/;
+  return urlPattern.test(text);
 }
 
 // Function to retrieve and display one-to-one messages
@@ -102,15 +255,23 @@ export async function getoneToMessage(user2_id) {
 
     //Display existing one-to-one messages (as you were doing before)
     response.data.oneToOneMsg.forEach((msg) => {
-      const senderName =
-        msg.senderId === response.data.user1_id
-          ? "You"
-          : response.data.username;
-      displayMessage(
-        senderName,
-        msg.message,
-        msg.senderId === response.data.user1_id ? "user" : "otheruser"
-      );
+      if (!isURL(msg.message)) {
+        const senderName =
+          msg.senderId === response.data.user1_id
+            ? "You"
+            : response.data.username;
+        displayMessage(
+          senderName,
+          msg.message,
+          msg.senderId === response.data.user1_id ? "user" : "otheruser"
+        );
+      } else {
+        fileMessage(
+          msg.message,
+          msg.message,
+          msg.senderId === response.data.user1_id ? "user" : "otheruser"
+        );
+      }
     });
 
     scrollBarDown();
@@ -405,7 +566,6 @@ export function eventTakePlaceOn(evetnOn) {
 
       if (clickedAnchor && clickedAnchor.id === "remove-contact") {
         const userId = Number(toDeleteDiv.parentElement.dataset.userId);
-        console.log(userId);
         try {
           const token = localStorage.getItem("token");
           const response = await axios.delete(
@@ -480,17 +640,40 @@ if (window.location.pathname === "/user/chat") {
   // Handle incoming one-to-one messages
   socket.on("msgFor", (data) => {
     const ownerId = localStorage.getItem("ownerId");
+    const senderId = localStorage.getItem("senderId");
 
     let user2_id = 0;
+
     if (Object.keys(userDetails).length > 0) {
       user2_id = userDetails.user2_id;
     } else {
       const userDetails = JSON.parse(localStorage.getItem("userDetails"));
       if (userDetails) user2_id = userDetails.user2_id;
+      else {
+        user2_id = Number(senderId);
+      }
     }
-
     if (data.recieverId == ownerId && data.senderId == user2_id) {
       displayMessage(data.sendername, data.message, "otheruser");
+      scrollBarDown();
+    }
+  });
+  socket.on("fileMsg", (data) => {
+    const ownerId = localStorage.getItem("ownerId");
+    const senderId = localStorage.getItem("senderId");
+    let user2_id = 0;
+
+    if (Object.keys(userDetails).length > 0) {
+      user2_id = userDetails.user2_id;
+    } else {
+      const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+      if (userDetails) user2_id = userDetails.user2_id;
+      else {
+        user2_id = Number(senderId);
+      }
+    }
+    if (data.user2_id == ownerId) {
+      fileMessage(data.file.fileUrl, data.file.originalname, "otheruser");
       scrollBarDown();
     }
   });
@@ -514,4 +697,4 @@ if (window.location.pathname === "/user/chat") {
   });
 }
 
-export { baseURL, socket, emojiPicker };
+export { baseURL, socket, emojiPicker, fileUploadInput, messageType };

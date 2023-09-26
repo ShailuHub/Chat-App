@@ -16,17 +16,14 @@ import {
 
 import { baseURL } from "./variable.js";
 
-import { emojiBtn } from "./variable.js";
 // DOM Elements
 const messageForm = document.getElementById("message-form");
-
 const messageBox = document.getElementById("message-box");
 const allUsers = document.getElementById("all-users");
-
 const activeUser = document.getElementById("active-user");
 const addUserBtn = document.getElementById("add-user-btn");
-
 const logOutBtn = document.getElementById("log-out-btn");
+const greetingText = document.getElementById("greeting");
 
 //Function to log out
 if (logOutBtn) {
@@ -116,6 +113,8 @@ export function displayGroup(groupName, groupId, adminId, adminName) {
 }
 if (allUsers) {
   allUsers.addEventListener("click", async (event) => {
+    messageForm.style.display = "block";
+    greetingText.style.display = "none";
     const token = localStorage.getItem("token");
     const clickedElement = event.target;
 
@@ -125,7 +124,6 @@ if (allUsers) {
     const datasersenderId = userChatRow.parentElement.dataset.senderId;
     const datasetConversationId =
       userChatRow.parentElement.dataset.conversationId;
-
     if (datasetuserId && !datasetConversationId) {
       const userId = Number(datasetuserId);
       user2_id = userId;
@@ -149,17 +147,16 @@ if (allUsers) {
     } else if (datasetConversationId && datasetConversationId) {
       const senderId = Number(datasersenderId);
       localStorage.setItem("senderId", senderId);
+
       const mediaQuery = window.matchMedia("(max-width:992px)");
       if (mediaQuery.matches) {
         window.location.href = "/user/privateChat";
       } else {
         // Highlight the selected user
-        console.log("Gud");
         removeAllActiveUserClasses();
         userChatRow.classList.add("active-user-bg");
 
         // Load one-to-one messages for the selected user
-        console.log(senderId);
         getoneToMessage(senderId);
 
         // Display user information

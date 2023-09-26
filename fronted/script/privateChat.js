@@ -5,6 +5,7 @@ import {
   displayMessage,
   scrollBarDown,
   socket,
+  fileMessage,
 } from "./common.js";
 
 // DOM Elements
@@ -27,6 +28,14 @@ if (window.location.pathname === "/user/privateChat") {
   socket.on("msgFor", (data) => {
     if (data.recieverId == ownerId && data.senderId == user2_id) {
       displayMessage(data.sendername, data.message, "otheruser");
+      scrollBarDown();
+    }
+  });
+
+  socket.on("fileMsg", (data) => {
+    console.log(data);
+    if (data.user2_id == ownerId) {
+      fileMessage(data.file.fileUrl, data.file.originalname, "otheruser");
       scrollBarDown();
     }
   });

@@ -12,11 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGroupPrivateChat = exports.getPrivateChat = exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
+exports.postGroupUploadFile = exports.postUploadFile = exports.getGroupPrivateChat = exports.getPrivateChat = exports.unknownMsg = exports.MsgFromUnknown = exports.postGroupMsg = exports.getGroupMsg = exports.getOneToOneMsg = exports.postMessage = void 0;
 const index_1 = require("../models/index");
 const sequelize_1 = __importDefault(require("sequelize"));
 const path_1 = __importDefault(require("path"));
 const path_2 = require("../utils/path");
+const fileUpload_1 = require("../services/fileUpload");
+const fileModel_1 = require("../models/fileModel");
 const postMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Get the user ID and message from the request body
     var _a, _b, _c;
@@ -284,3 +286,124 @@ const getGroupPrivateChat = (req, res) => __awaiter(void 0, void 0, void 0, func
     res.status(200).sendFile(filePath);
 });
 exports.getGroupPrivateChat = getGroupPrivateChat;
+const postUploadFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _k;
+    const user1_id = (_k = req.user) === null || _k === void 0 ? void 0 : _k.userId;
+    const user2_id = Number(req.params.user2_id);
+    let conversationId = yield index_1.Conversation.findOne({
+        where: {
+            [sequelize_1.default.Op.or]: [
+                {
+                    user1_id: user1_id,
+                    user2_id: user2_id,
+                },
+                {
+                    user1_id: user2_id,
+                    user2_id: user1_id,
+                },
+            ],
+        },
+        attributes: ["conversationId"],
+    });
+    if (!conversationId)
+        return res.status(400).send("No conversation exists");
+    const files = req.files;
+    try {
+        if ((files === null || files === void 0 ? void 0 : files.length) === 0) {
+            return res.status(400).send("No file uploaded.");
+        }
+        else {
+            const uploadResponses = [];
+            const filePromises = files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+                var _l;
+                const { buffer, originalname, mimetype } = file;
+                const fileUrl = yield (0, fileUpload_1.uploadToS3)(buffer, originalname);
+                uploadResponses.push({ fileUrl, originalname });
+                const isfileExists = yield fileModel_1.File.findOne({
+                    where: { fileName: originalname },
+                });
+                if (!isfileExists) {
+                    yield fileModel_1.File.create({
+                        fileName: originalname,
+                        fileType: mimetype,
+                        fileUrl: fileUrl,
+                        conversationId: Number(conversationId === null || conversationId === void 0 ? void 0 : conversationId.conversationId),
+                        senderId: user1_id,
+                    });
+                }
+                yield index_1.Message.create({
+                    sendername: (_l = req.user) === null || _l === void 0 ? void 0 : _l.username,
+                    conversationId: Number(conversationId === null || conversationId === void 0 ? void 0 : conversationId.conversationId),
+                    message: fileUrl,
+                    senderId: user1_id,
+                });
+            }));
+            yield Promise.all(filePromises);
+            res.status(200).send({
+                message: "file recieved",
+                data: uploadResponses,
+                senderId: user1_id,
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.postUploadFile = postUploadFile;
+const postGroupUploadFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _m;
+    const userId = (_m = req.user) === null || _m === void 0 ? void 0 : _m.userId;
+    const groupId = Number(req.params.groupId);
+    // Check if the conversation (group) exists
+    const conversationId = yield index_1.Conversation.findOne({
+        where: { groupId: groupId },
+    });
+    if (!conversationId)
+        return res.status(400).send("No conversation exists");
+    const files = req.files;
+    try {
+        if ((files === null || files === void 0 ? void 0 : files.length) === 0) {
+            return res.status(400).send("No file uploaded.");
+        }
+        else {
+            const uploadResponses = [];
+            const filePromises = files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+                var _o;
+                const { buffer, originalname, mimetype } = file;
+                const fileUrl = yield (0, fileUpload_1.uploadToS3)(buffer, originalname);
+                uploadResponses.push({ fileUrl, originalname });
+                const isfileExists = yield fileModel_1.File.findOne({
+                    where: { fileName: originalname },
+                });
+                if (!isfileExists) {
+                    yield fileModel_1.File.create({
+                        fileName: originalname,
+                        fileType: mimetype,
+                        fileUrl: fileUrl,
+                        conversationId: Number(conversationId === null || conversationId === void 0 ? void 0 : conversationId.conversationId),
+                        senderId: userId,
+                    });
+                }
+                yield index_1.Message.create({
+                    sendername: (_o = req.user) === null || _o === void 0 ? void 0 : _o.username,
+                    conversationId: Number(conversationId === null || conversationId === void 0 ? void 0 : conversationId.conversationId),
+                    message: fileUrl,
+                    senderId: userId,
+                });
+            }));
+            yield Promise.all(filePromises);
+            res.status(200).send({
+                message: "file recieved",
+                data: uploadResponses,
+                senderId: userId,
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal server error" });
+    }
+});
+exports.postGroupUploadFile = postGroupUploadFile;

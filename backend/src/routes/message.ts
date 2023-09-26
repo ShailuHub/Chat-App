@@ -11,10 +11,13 @@ import {
   unknownMsg,
   getPrivateChat,
   getGroupPrivateChat,
+  postUploadFile,
+  postGroupUploadFile,
 } from "../controllers/message";
 
 // Import your authentication middleware
 import authenticate from "../middleware/authenticate";
+import { upload } from "../middleware/multerConfiguration";
 
 // Define routes with comments
 // Route to send a one-to-one message
@@ -37,6 +40,20 @@ router.get(
   "/user/chat/usknownMsg/msg/:userId/:conversationId",
   authenticate,
   unknownMsg
+);
+
+router.post(
+  "/user/uploadFile/:user2_id",
+  authenticate,
+  upload.array("files"),
+  postUploadFile
+);
+
+router.post(
+  "/user/uploadFile/group/:groupId",
+  authenticate,
+  upload.array("files"),
+  postGroupUploadFile
 );
 
 export default router;

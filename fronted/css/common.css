@@ -63,3 +63,26 @@ p {
   max-width: 80%;
   padding: 5px 15px 5px 15px;
 }
+
+/* Style for the custom file upload button */
+.custom-file-upload {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: inline-block;
+  padding: 6px 12px;
+}
+
+/* Style for the hidden file input */
+.custom-file-upload input[type="file"] {
+  position: absolute;
+  font-size: 100px;
+  right: 0;
+  top: 0;
+}
+
+/* Style for the image inside the button */
+.custom-file-upload img {
+  margin-right: 8px; /* Adjust as needed */
+  vertical-align: middle;
+}

@@ -7,6 +7,10 @@ import {
   scrollBarDown,
   socket,
   emojiPicker,
+  fileUploadInput,
+  messageType,
+  fileMessage,
+  isURL,
 } from "./common.js";
 import { baseURL } from "./variable.js";
 // DOM Elements
@@ -27,22 +31,55 @@ export async function postGroupMessage(event) {
   const details = { message: message.value };
   const token = localStorage.getItem("token");
   if (groupDetails) {
+    if (message === "text") {
+    }
     let groupId = Number(groupDetails.groupId);
     if (!isNaN(groupId)) {
       try {
         if (groupId > 0) {
-          const response = await axios.post(
-            `${baseURL}/user/chat/group/msg/${groupId}`,
-            details,
-            { headers: { Authorization: token } }
-          );
-          // Display the user's message
-          displayMessage("You", details.message, "user");
-          scrollBarDown();
-          if (response.status === 200) {
-            socket.emit("groupChat", response.data);
-            emojiPicker.remove();
-            messageForm.reset();
+          if (messageType === "file") {
+            if (fileUploadInput.files.length > 0) {
+              const formData = new FormData(messageForm);
+              const response = await axios.post(
+                `${baseURL}/user/uploadFile/group/${groupId}`,
+                formData,
+                {
+                  headers: {
+                    Authorization: token,
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+
+              if (response.status === 200) {
+                // Handle the file upload response
+                message.readOnly = false;
+                const fileUrl = response.data.data;
+                fileUrl.forEach((file) => {
+                  socket.emit("fileGroupChat", { groupId, file });
+                  fileMessage(file.fileUrl, file.originalname, "user");
+                  scrollBarDown();
+                  emojiPicker.remove();
+                  messageForm.reset();
+                });
+              }
+            }
+          } else {
+            if (message.value.trim() !== "") {
+              const response = await axios.post(
+                `${baseURL}/user/chat/group/msg/${groupId}`,
+                details,
+                { headers: { Authorization: token } }
+              );
+              // Display the user's message
+              displayMessage("You", details.message, "user");
+              scrollBarDown();
+              if (response.status === 200) {
+                socket.emit("groupChat", response.data);
+                emojiPicker.remove();
+                messageForm.reset();
+              }
+            }
           }
         }
       } catch (error) {
@@ -68,13 +105,21 @@ export async function getGroupMessage() {
         messageBox.innerHTML = "";
         // Display new one-to-one messages
         response.data.groupMsg.forEach((msg) => {
-          const senderName =
-            msg.senderId === response.data.userId ? "You" : msg.sendername;
-          displayMessage(
-            senderName,
-            msg.message,
-            msg.senderId === response.data.userId ? "user" : "otheruser"
-          );
+          if (!isURL(msg.message)) {
+            const senderName =
+              msg.senderId === response.data.userId ? "You" : msg.sendername;
+            displayMessage(
+              senderName,
+              msg.message,
+              msg.senderId === response.data.userId ? "user" : "otheruser"
+            );
+          } else {
+            fileMessage(
+              msg.message,
+              msg.message,
+              msg.senderId === response.data.userId ? "user" : "otheruser"
+            );
+          }
         });
         scrollBarDown();
       } catch (error) {
@@ -181,6 +226,14 @@ if (window.location.pathname === "/user/group") {
   socket.on("msgForGroup", (data) => {
     if (groupDetails && groupDetails.groupId == data.groupId) {
       displayMessage(data.sendername, data.message, "otheruser");
+      scrollBarDown();
+    }
+  });
+
+  socket.on("fileMessageForGroup", (data) => {
+    console.log(data);
+    if (groupDetails && groupDetails.groupId == data.groupId) {
+      fileMessage(data.file.fileUrl, data.file.originalname, "otheruser");
       scrollBarDown();
     }
   });
